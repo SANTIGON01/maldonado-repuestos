@@ -145,7 +145,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container-custom py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="font-mono text-xs text-white/40">
-            © 2024 MALDONADO REPUESTOS. TODOS LOS DERECHOS RESERVADOS.
+            © 2026 MALDONADO REPUESTOS. TODOS LOS DERECHOS RESERVADOS.
           </p>
           <div className="flex items-center gap-6">
             <a href="#" className="font-mono text-xs text-white/40 hover:text-white transition-colors">

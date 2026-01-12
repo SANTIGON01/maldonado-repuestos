@@ -4,9 +4,10 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Loader2 } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import api from '../lib/api'
 import ProductCard from './ProductCard'
+import { ProductGridSkeleton } from './ProductCardSkeleton'
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState([])
@@ -85,9 +86,7 @@ export default function FeaturedProducts() {
 
         {/* Products Grid */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-maldonado-red" />
-          </div>
+          <ProductGridSkeleton count={8} viewMode="grid" />
         ) : products.length === 0 ? (
           <div className="text-center py-20 text-maldonado-chrome">
             <p>No hay productos destacados disponibles</p>

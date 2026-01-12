@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import api from '../lib/api'
 import ProductCard from '../components/ProductCard'
+import { ProductGridSkeleton } from '../components/ProductCardSkeleton'
 
 const SORT_OPTIONS = [
   { value: 'created_at:desc', label: 'Más recientes' },
@@ -321,9 +322,7 @@ export default function CatalogPage({ onQuoteRequest }) {
       {/* Products Grid */}
       <div className="container-custom py-8">
         {isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-maldonado-red border-t-transparent" />
-          </div>
+          <ProductGridSkeleton count={12} viewMode={viewMode} />
         ) : products.length === 0 ? (
           <div className="text-center py-20">
             <Package className="w-16 h-16 text-maldonado-chrome mx-auto mb-4" />

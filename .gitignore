@@ -45,6 +45,7 @@ Thumbs.db
 # Temp
 *.tmp
 *.temp
+tmpclaude-*
 
 # Database
 *.db

@@ -6,6 +6,7 @@ import QuoteCartSidebar from './components/QuoteCartSidebar'
 import QuoteWhatsAppModal from './components/QuoteWhatsAppModal'
 import LoginModal from './components/LoginModal'
 import QuoteModal from './components/QuoteModal'
+import WhatsAppButton from './components/WhatsAppButton'
 
 // Pages
 import HomePage from './pages/HomePage'
@@ -96,6 +97,9 @@ function App() {
       </main>
       
       <Footer />
+
+      {/* Botón flotante de WhatsApp */}
+      <WhatsAppButton />
 
       {/* Modals & Sidebars */}
       <QuoteCartSidebar 

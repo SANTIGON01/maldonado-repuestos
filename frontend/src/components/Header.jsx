@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ShoppingCart, Search, Phone, User, LogOut, Settings } from 'lucide-react'
+import { Menu, X, ClipboardList, Search, Phone, User, LogOut, Settings } from 'lucide-react'
 import { useLocalCartStore } from '../store/localCartStore'
 import { useAuthStore } from '../store/authStore'
 
@@ -193,7 +193,7 @@ export default function Header({ onCartClick, onLoginClick }) {
                 className="relative bg-maldonado-red-700 text-white p-3 
                          border border-maldonado-red-600 hover:bg-maldonado-red-800 transition-colors"
               >
-                <ShoppingCart className="w-5 h-5" />
+                <ClipboardList className="w-5 h-5" />
                 <AnimatePresence>
                   {itemsCount > 0 && (
                     <motion.span
