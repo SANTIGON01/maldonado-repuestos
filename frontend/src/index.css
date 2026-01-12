@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   MALDONADO REPUESTOS
+   Estética: INDUSTRIAL BOLD
+   ======================================== */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    @apply text-zinc-900 bg-zinc-100 antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    @apply bg-red-700 text-white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-zinc-900;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-red-700;
+  }
+}
+
+@layer components {
+  .btn-brutal {
+    @apply relative inline-flex items-center justify-center gap-2
+           bg-red-700 text-white uppercase tracking-wider
+           px-8 py-4 
+           border-2 border-zinc-900
+           transition-all duration-200;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .btn-brutal:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  }
+
+  .btn-brutal-outline {
+    @apply relative inline-flex items-center justify-center gap-2
+           bg-transparent text-zinc-900 uppercase tracking-wider
+           px-8 py-4 
+           border-2 border-zinc-900
+           transition-all duration-200
+           hover:bg-zinc-900 hover:text-white;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .btn-brutal-outline:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+  }
+
+  .btn-brutal-white {
+    @apply relative inline-flex items-center justify-center gap-2
+           bg-white text-zinc-900 uppercase tracking-wider
+           px-8 py-4 
+           border-2 border-zinc-900
+           transition-all duration-200;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .btn-brutal-white:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .text-outline {
+    -webkit-text-stroke: 2px currentColor;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .font-display {
+    font-family: 'Bebas Neue', Impact, sans-serif;
+  }
+
+  .font-heading {
+    font-family: 'Oswald', sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer utilities {
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+}
+
+/* Marquee animation - texto móvil infinito */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
