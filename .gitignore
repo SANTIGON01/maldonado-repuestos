@@ -46,3 +46,11 @@ Thumbs.db
 *.tmp
 *.temp
 
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Secrets (nunca subir)
+*.pem
+*.key

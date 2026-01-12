@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "Maldonado Repuestos API"
     DEBUG: bool = False
     
-    # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./maldonado.db"
+    # Database - PostgreSQL por defecto (local)
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:Santi2012@localhost:5432/maldonado"
     
     # Security
     SECRET_KEY: str = "dev-secret-key-change-in-production"
