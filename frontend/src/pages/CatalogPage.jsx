@@ -43,6 +43,14 @@ export default function CatalogPage({ onQuoteRequest }) {
   // View mode
   const [viewMode, setViewMode] = useState('grid')
 
+  // Leer parámetro de búsqueda de la URL
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search')
+    if (searchFromUrl) {
+      setSearchTerm(searchFromUrl)
+    }
+  }, [searchParams])
+
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -121,21 +129,21 @@ export default function CatalogPage({ onQuoteRequest }) {
   }
 
   return (
-    <div className="min-h-screen bg-maldonado-cream pt-28">
+    <div className="min-h-screen bg-maldonado-cream pt-20 sm:pt-28">
       {/* Breadcrumb simple */}
       <div className="bg-maldonado-dark/95 border-b border-white/10">
-        <div className="container-custom py-3">
-          <nav className="flex items-center gap-2 text-sm text-white/70">
+        <div className="container-custom py-2 sm:py-3 px-4">
+          <nav className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-white/70">
             <Link to="/" className="hover:text-white transition-colors flex items-center gap-1">
-              <Home className="w-4 h-4" />
-              <span>Inicio</span>
+              <Home className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">Inicio</span>
             </Link>
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
             <Link to="/catalogo" className="hover:text-white transition-colors">Catálogo</Link>
             {currentCategory && (
               <>
-                <ChevronRight className="w-4 h-4" />
-                <span className="text-maldonado-red font-medium">{currentCategory.name}</span>
+                <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="text-maldonado-red font-medium truncate max-w-[100px] sm:max-w-none">{currentCategory.name}</span>
               </>
             )}
           </nav>
@@ -144,24 +152,24 @@ export default function CatalogPage({ onQuoteRequest }) {
 
       {/* Header */}
       <div className="bg-white border-b-4 border-maldonado-dark">
-        <div className="container-custom py-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="container-custom py-4 sm:py-8 px-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
             <div>
               {/* Botón volver al catálogo si estamos en categoría */}
               {currentCategory && (
                 <Link
                   to="/catalogo"
-                  className="inline-flex items-center gap-2 text-maldonado-red hover:text-maldonado-red-700 
-                           font-heading text-sm mb-3 group transition-colors"
+                  className="inline-flex items-center gap-1 sm:gap-2 text-maldonado-red hover:text-maldonado-red-700 
+                           font-heading text-xs sm:text-sm mb-2 sm:mb-3 group transition-colors"
                 >
-                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                  VER TODAS LAS CATEGORÍAS
+                  <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 group-hover:-translate-x-1 transition-transform" />
+                  <span className="hidden xs:inline">VER TODAS LAS</span> CATEGORÍAS
                 </Link>
               )}
-              <h1 className="font-display text-4xl lg:text-5xl text-maldonado-dark">
+              <h1 className="font-display text-2xl sm:text-3xl lg:text-5xl text-maldonado-dark leading-tight">
                 {currentCategory ? currentCategory.name.toUpperCase() : 'CATÁLOGO COMPLETO'}
               </h1>
-              <p className="text-maldonado-chrome mt-2">
+              <p className="text-maldonado-chrome mt-1 sm:mt-2 text-sm sm:text-base">
                 {currentCategory 
                   ? currentCategory.description 
                   : 'Todos nuestros repuestos para semirremolques y acoplados'
@@ -170,7 +178,7 @@ export default function CatalogPage({ onQuoteRequest }) {
             </div>
             
             <div className="flex items-center gap-4">
-              <span className="text-sm text-maldonado-chrome">
+              <span className="text-xs sm:text-sm text-maldonado-chrome font-mono">
                 {totalProducts} productos
               </span>
             </div>
@@ -178,14 +186,14 @@ export default function CatalogPage({ onQuoteRequest }) {
         </div>
       </div>
 
-      {/* Categories Pills (if no category selected) */}
+      {/* Categories Pills (if no category selected) - horizontal scroll en móvil */}
       {!categorySlug && categories.length > 0 && (
         <div className="bg-white border-b border-maldonado-light-gray">
-          <div className="container-custom py-4">
-            <div className="flex flex-wrap gap-2">
+          <div className="container-custom py-3 sm:py-4 px-4">
+            <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
               <Link
                 to="/catalogo"
-                className="px-4 py-2 bg-maldonado-dark text-white font-heading text-sm"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-maldonado-dark text-white font-heading text-xs sm:text-sm flex-shrink-0 rounded-lg sm:rounded-none"
               >
                 TODOS
               </Link>
@@ -193,10 +201,10 @@ export default function CatalogPage({ onQuoteRequest }) {
                 <Link
                   key={cat.id}
                   to={`/catalogo/${cat.slug}`}
-                  className="px-4 py-2 border-2 border-maldonado-dark text-maldonado-dark 
-                           font-heading text-sm hover:bg-maldonado-dark hover:text-white transition-colors"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-maldonado-dark text-maldonado-dark 
+                           font-heading text-xs sm:text-sm hover:bg-maldonado-dark hover:text-white transition-colors flex-shrink-0 whitespace-nowrap rounded-lg sm:rounded-none"
                 >
-                  {cat.name.toUpperCase()} ({cat.products_count})
+                  {cat.name.toUpperCase()} <span className="hidden sm:inline">({cat.products_count})</span>
                 </Link>
               ))}
             </div>
@@ -205,64 +213,67 @@ export default function CatalogPage({ onQuoteRequest }) {
       )}
 
       {/* Filters Bar */}
-      <div className="bg-white border-b border-maldonado-light-gray sticky top-[72px] z-20">
-        <div className="container-custom py-4">
-          <div className="flex flex-col md:flex-row md:items-center gap-4">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-maldonado-chrome" />
+      <div className="bg-white border-b border-maldonado-light-gray sticky top-[64px] sm:top-[72px] z-20">
+        <div className="container-custom py-3 sm:py-4 px-4">
+          <div className="flex flex-col gap-3 sm:gap-4">
+            {/* Search - siempre full width en móvil */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-maldonado-chrome" />
               <input
                 type="text"
-                placeholder="Buscar en catálogo..."
+                placeholder="Buscar..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border-2 border-maldonado-dark 
-                         focus:border-maldonado-red outline-none font-mono"
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 border-2 border-maldonado-dark rounded-lg sm:rounded-none
+                         focus:border-maldonado-red outline-none font-mono text-sm sm:text-base"
               />
             </div>
 
-            {/* Sort */}
-            <div className="flex items-center gap-2">
-              <ArrowUpDown className="w-5 h-5 text-maldonado-chrome" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="border-2 border-maldonado-dark px-3 py-2 font-heading text-sm 
-                         focus:border-maldonado-red outline-none bg-white"
-              >
-                {SORT_OPTIONS.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-            </div>
+            {/* Bottom row: Sort, Filters, View */}
+            <div className="flex items-center gap-2 sm:gap-4">
+              {/* Sort */}
+              <div className="flex items-center gap-1 sm:gap-2 flex-1 sm:flex-none">
+                <ArrowUpDown className="w-4 h-4 text-maldonado-chrome hidden sm:block" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="flex-1 sm:flex-none border-2 border-maldonado-dark px-2 sm:px-3 py-1.5 sm:py-2 font-heading text-xs sm:text-sm 
+                           focus:border-maldonado-red outline-none bg-white rounded-lg sm:rounded-none"
+                >
+                  {SORT_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Filters Toggle */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2 border-2 font-heading text-sm transition-colors
-                ${showFilters 
-                  ? 'bg-maldonado-dark text-white border-maldonado-dark' 
-                  : 'border-maldonado-dark text-maldonado-dark hover:bg-maldonado-dark hover:text-white'
-                }`}
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              FILTROS
-            </button>
+              {/* Filters Toggle */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 border-2 font-heading text-xs sm:text-sm transition-colors rounded-lg sm:rounded-none
+                  ${showFilters 
+                    ? 'bg-maldonado-dark text-white border-maldonado-dark' 
+                    : 'border-maldonado-dark text-maldonado-dark hover:bg-maldonado-dark hover:text-white'
+                  }`}
+              >
+                <SlidersHorizontal className="w-4 h-4" />
+                <span className="hidden xs:inline">FILTROS</span>
+              </button>
 
-            {/* View Mode */}
-            <div className="flex border-2 border-maldonado-dark">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 ${viewMode === 'grid' ? 'bg-maldonado-dark text-white' : ''}`}
-              >
-                <Grid3X3 className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 ${viewMode === 'list' ? 'bg-maldonado-dark text-white' : ''}`}
-              >
-                <List className="w-5 h-5" />
-              </button>
+              {/* View Mode */}
+              <div className="flex border-2 border-maldonado-dark rounded-lg sm:rounded-none overflow-hidden">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-1.5 sm:p-2 ${viewMode === 'grid' ? 'bg-maldonado-dark text-white' : ''}`}
+                >
+                  <Grid3X3 className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-1.5 sm:p-2 ${viewMode === 'list' ? 'bg-maldonado-dark text-white' : ''}`}
+                >
+                  <List className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+              </div>
             </div>
           </div>
 
@@ -272,16 +283,16 @@ export default function CatalogPage({ onQuoteRequest }) {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="mt-4 pt-4 border-t border-maldonado-light-gray"
+              className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-maldonado-light-gray"
             >
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-3 sm:gap-4 items-center">
                 {/* Brand Filter */}
                 <div>
-                  <label className="block text-sm font-heading mb-1">MARCA</label>
+                  <label className="block text-xs sm:text-sm font-heading mb-1">MARCA</label>
                   <select
                     value={selectedBrand}
                     onChange={(e) => setSelectedBrand(e.target.value)}
-                    className="border-2 border-maldonado-dark px-3 py-2 font-mono text-sm bg-white"
+                    className="border-2 border-maldonado-dark px-2 sm:px-3 py-1.5 sm:py-2 font-mono text-xs sm:text-sm bg-white rounded-lg sm:rounded-none"
                   >
                     <option value="">Todas</option>
                     {brands.map(brand => (
@@ -296,9 +307,9 @@ export default function CatalogPage({ onQuoteRequest }) {
                     type="checkbox"
                     checked={inStockOnly}
                     onChange={(e) => setInStockOnly(e.target.checked)}
-                    className="w-5 h-5 accent-maldonado-red"
+                    className="w-4 h-4 sm:w-5 sm:h-5 accent-maldonado-red"
                   />
-                  <span className="font-heading text-sm">Solo en stock</span>
+                  <span className="font-heading text-xs sm:text-sm">Solo en stock</span>
                 </label>
 
                 {/* Clear Filters */}
@@ -308,10 +319,10 @@ export default function CatalogPage({ onQuoteRequest }) {
                     setInStockOnly(false)
                     setSearchTerm('')
                   }}
-                  className="flex items-center gap-1 text-maldonado-red hover:underline font-heading text-sm"
+                  className="flex items-center gap-1 text-maldonado-red hover:underline font-heading text-xs sm:text-sm"
                 >
-                  <X className="w-4 h-4" />
-                  Limpiar filtros
+                  <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                  Limpiar
                 </button>
               </div>
             </motion.div>
@@ -320,30 +331,30 @@ export default function CatalogPage({ onQuoteRequest }) {
       </div>
 
       {/* Products Grid */}
-      <div className="container-custom py-8">
+      <div className="container-custom py-4 sm:py-8 px-4">
         {isLoading ? (
           <ProductGridSkeleton count={12} viewMode={viewMode} />
         ) : products.length === 0 ? (
-          <div className="text-center py-20">
-            <Package className="w-16 h-16 text-maldonado-chrome mx-auto mb-4" />
-            <h2 className="font-heading text-2xl text-maldonado-dark mb-2">
+          <div className="text-center py-12 sm:py-20">
+            <Package className="w-12 h-12 sm:w-16 sm:h-16 text-maldonado-chrome mx-auto mb-3 sm:mb-4" />
+            <h2 className="font-heading text-xl sm:text-2xl text-maldonado-dark mb-2">
               No se encontraron productos
             </h2>
-            <p className="text-maldonado-chrome mb-4">
+            <p className="text-maldonado-chrome mb-4 text-sm sm:text-base">
               Probá ajustando los filtros o buscando otro término
             </p>
             <Link
               to="/catalogo"
-              className="inline-block bg-maldonado-red text-white font-heading px-6 py-3 hover:bg-maldonado-red-700 transition-colors"
+              className="inline-block bg-maldonado-red text-white font-heading px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-xl sm:rounded-none hover:bg-maldonado-red-700 transition-colors"
             >
               VER TODO EL CATÁLOGO
             </Link>
           </div>
         ) : (
           <>
-            <div className={`grid gap-6 ${
+            <div className={`grid gap-3 sm:gap-6 ${
               viewMode === 'grid' 
-                ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+                ? 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
                 : 'grid-cols-1'
             }`}>
               {products.map((product, index) => (
@@ -351,7 +362,7 @@ export default function CatalogPage({ onQuoteRequest }) {
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
+                  transition={{ delay: index * 0.03 }}
                 >
                   <ProductCard 
                     product={product} 
@@ -364,29 +375,31 @@ export default function CatalogPage({ onQuoteRequest }) {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-8">
+              <div className="flex justify-center items-center gap-2 mt-6 sm:mt-8">
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-4 py-2 border-2 border-maldonado-dark font-heading 
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-maldonado-dark font-heading text-xs sm:text-sm rounded-lg sm:rounded-none
                            disabled:opacity-50 disabled:cursor-not-allowed
                            hover:bg-maldonado-dark hover:text-white transition-colors"
                 >
-                  ANTERIOR
+                  <span className="hidden xs:inline">ANTERIOR</span>
+                  <span className="xs:hidden">←</span>
                 </button>
                 
-                <span className="px-4 py-2 font-mono">
+                <span className="px-3 sm:px-4 py-1.5 sm:py-2 font-mono text-sm">
                   {page} / {totalPages}
                 </span>
                 
                 <button
                   onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="px-4 py-2 border-2 border-maldonado-dark font-heading
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-maldonado-dark font-heading text-xs sm:text-sm rounded-lg sm:rounded-none
                            disabled:opacity-50 disabled:cursor-not-allowed
                            hover:bg-maldonado-dark hover:text-white transition-colors"
                 >
-                  SIGUIENTE
+                  <span className="hidden xs:inline">SIGUIENTE</span>
+                  <span className="xs:hidden">→</span>
                 </button>
               </div>
             )}

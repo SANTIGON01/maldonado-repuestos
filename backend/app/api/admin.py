@@ -475,18 +475,44 @@ async def delete_product(
     db: AsyncSession = Depends(get_db)
 ):
     """Delete a product"""
+    # Verificar que el producto existe
     result = await db.execute(
-        select(Product).where(Product.id == product_id)
+        select(Product.id).where(Product.id == product_id)
     )
-    product = result.scalar_one_or_none()
-    
-    if not product:
+    if not result.scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Producto no encontrado"
         )
     
-    await db.delete(product)
+    # Eliminar imágenes del producto primero
+    await db.execute(
+        delete(ProductImage).where(ProductImage.product_id == product_id)
+    )
+    
+    # Eliminar items del carrito relacionados
+    from app.models.cart import CartItem
+    await db.execute(
+        delete(CartItem).where(CartItem.product_id == product_id)
+    )
+    
+    # Poner NULL en order_items y quote_items (mantiene historial)
+    from app.models.order import OrderItem
+    from app.models.quote import QuoteItem
+    from sqlalchemy import update
+    
+    await db.execute(
+        update(OrderItem).where(OrderItem.product_id == product_id).values(product_id=None)
+    )
+    await db.execute(
+        update(QuoteItem).where(QuoteItem.product_id == product_id).values(product_id=None)
+    )
+    
+    # Finalmente eliminar el producto
+    await db.execute(
+        delete(Product).where(Product.id == product_id)
+    )
+    
     await db.commit()
 
 

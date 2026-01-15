@@ -693,9 +693,14 @@ function ProductForm({ product, categories, onSave, onCancel }) {
     // La imagen principal (legacy) es la primera que esté marcada como primary
     const primaryImage = images.find(img => img.is_primary)?.image_url || images[0]?.image_url || ''
     
+    // Precio: si está vacío o es 0, enviamos 0 (mostrará "Consultar")
+    const priceValue = formData.price === '' || formData.price === null 
+      ? 0 
+      : parseFloat(formData.price)
+    
     onSave({
       ...formData,
-      price: parseFloat(formData.price) || 0,
+      price: priceValue,
       original_price: formData.original_price ? parseFloat(formData.original_price) : null,
       stock: parseInt(formData.stock) || 0,
       category_id: parseInt(formData.category_id),
@@ -772,18 +777,23 @@ function ProductForm({ product, categories, onSave, onCancel }) {
 
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block font-heading text-sm mb-1">PRECIO *</label>
+            <label className="block font-heading text-sm mb-1">
+              PRECIO
+              <span className="text-xs font-normal text-zinc-500 ml-2">(opcional)</span>
+            </label>
             <input
               type="number"
               name="price"
               value={formData.price}
               onChange={handleChange}
-              required
               min="0"
               step="0.01"
               className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
-              placeholder="0.00"
+              placeholder="0 = Consultar"
             />
+            <p className="text-xs text-zinc-500 mt-1">
+              Dejá vacío o 0 para mostrar "Consultar precio"
+            </p>
           </div>
           <div>
             <label className="block font-heading text-sm mb-1">PRECIO ANTERIOR</label>
@@ -1220,6 +1230,7 @@ function BannerForm({ banner, onSave, onCancel }) {
     subtitle: banner?.subtitle || '',
     description: banner?.description || '',
     image_url: banner?.image_url || '',
+    brand: banner?.brand || '',
     button_text: banner?.button_text || 'VER MÁS',
     button_link: banner?.button_link || '/catalogo',
     banner_type: banner?.banner_type || 'promo',
@@ -1255,6 +1266,12 @@ function BannerForm({ banner, onSave, onCancel }) {
     { value: 'gradient-red', label: 'Rojo', color: 'bg-red-700' },
     { value: 'dark', label: 'Oscuro', color: 'bg-zinc-800' },
     { value: 'gradient-dark', label: 'Gris', color: 'bg-zinc-700' },
+  ]
+
+  // Lista de marcas disponibles
+  const availableBrands = [
+    'JOST', 'MASTER', 'SUSPENSYS', 'CASTERTECH', 'HYVA', 'FRASLE',
+    'SADAR', 'NEUMACARG', 'FERVI', 'BAIML', 'KINEDYNE', 'FESTO'
   ]
 
   return (
@@ -1336,6 +1353,25 @@ function BannerForm({ banner, onSave, onCancel }) {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Selector de marca */}
+        <div>
+          <label className="block font-heading text-sm mb-1">MARCA DEL PRODUCTO (para mostrar logo)</label>
+          <select
+            name="brand"
+            value={formData.brand}
+            onChange={handleChange}
+            className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none bg-white"
+          >
+            <option value="">Sin marca / No mostrar logo</option>
+            {availableBrands.map(brand => (
+              <option key={brand} value={brand}>{brand}</option>
+            ))}
+          </select>
+          <p className="text-xs text-maldonado-chrome mt-1">
+            Si seleccionas una marca, se mostrará el logo en el banner (debe existir en /brands/)
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

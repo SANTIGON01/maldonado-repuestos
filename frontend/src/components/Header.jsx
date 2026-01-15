@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ClipboardList, Search, Phone, User, LogOut, Settings } from 'lucide-react'
+import { Menu, X, ClipboardList, Phone, User, LogOut, Settings } from 'lucide-react'
 import { useLocalCartStore } from '../store/localCartStore'
 import { useAuthStore } from '../store/authStore'
+import SearchBar from './SearchBar'
 
 const navigation = [
   { name: 'INICIO', href: '/' },
@@ -57,12 +58,12 @@ export default function Header({ onCartClick, onLoginClick }) {
           (scrolled || !isHomePage) ? 'h-0' : 'h-auto'
         }`}>
           <div className="container-custom py-2 flex justify-between items-center">
-            <a href="tel:+541112345678" className="flex items-center gap-2 text-white text-sm font-mono">
+            <a href="tel:+5492614544128" className="flex items-center gap-2 text-white text-sm font-mono">
               <Phone className="w-4 h-4" />
-              +54 11 1234-5678
+              0261 15-454-4128
             </a>
             <span className="hidden sm:block text-white/80 text-sm font-mono">
-              ESPECIALISTAS EN SEMIRREMOLQUES Y ACOPLADOS
+              📍 MAIPÚ, MENDOZA • ESPECIALISTAS EN SEMIRREMOLQUES
             </span>
           </div>
         </div>
@@ -133,19 +134,9 @@ export default function Header({ onCartClick, onLoginClick }) {
 
             {/* Search + Cart + Auth */}
             <div className="flex items-center gap-3">
-              {/* Search */}
-              <div className="hidden md:flex items-center">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Buscar repuestos..."
-                    className="w-48 lg:w-64 bg-white/10 border border-white/20 rounded-none
-                             px-4 py-2 text-sm text-white placeholder:text-white/50
-                             focus:outline-none focus:bg-white/20 focus:border-maldonado-red-700
-                             transition-all font-mono"
-                  />
-                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
-                </div>
+              {/* Search - Buscador inteligente */}
+              <div className="hidden md:block">
+                <SearchBar />
               </div>
 
               {/* User Menu */}
@@ -317,15 +308,9 @@ export default function Header({ onCartClick, onLoginClick }) {
                 )}
               </motion.div>
 
-              {/* Mobile search */}
+              {/* Mobile search - Buscador inteligente */}
               <div className="pt-4">
-                <input
-                  type="text"
-                  placeholder="Buscar repuestos..."
-                  className="w-full bg-white/10 border-2 border-white/20 
-                           px-4 py-4 text-white placeholder:text-white/50
-                           focus:outline-none focus:border-maldonado-red-700 font-mono"
-                />
+                <SearchBar isMobile onClose={() => setMobileMenuOpen(false)} />
               </div>
             </div>
           </motion.div>

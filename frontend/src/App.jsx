@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -8,11 +8,18 @@ import LoginModal from './components/LoginModal'
 import QuoteModal from './components/QuoteModal'
 import WhatsAppButton from './components/WhatsAppButton'
 
-// Pages
-import HomePage from './pages/HomePage'
-import CatalogPage from './pages/CatalogPage'
-import ProductPage from './pages/ProductPage'
-import AdminPage from './pages/AdminPage'
+// Pages - Lazy loaded para mejor performance
+const HomePage = lazy(() => import('./pages/HomePage'))
+const CatalogPage = lazy(() => import('./pages/CatalogPage'))
+const ProductPage = lazy(() => import('./pages/ProductPage'))
+const AdminPage = lazy(() => import('./pages/AdminPage'))
+
+// Loading fallback minimalista
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-zinc-50">
+    <div className="w-8 h-8 border-4 border-maldonado-red border-t-transparent rounded-full animate-spin" />
+  </div>
+)
 
 import { useAuthStore } from './store/authStore'
 
@@ -57,9 +64,11 @@ function App() {
   // Admin page has its own layout
   if (isAdminPage) {
     return (
-      <Routes>
-        <Route path="/admin" element={<AdminPage />} />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/admin" element={<AdminPage />} />
+        </Routes>
+      </Suspense>
     )
   }
 
@@ -71,29 +80,31 @@ function App() {
       />
       
       <main className="flex-1">
-        <Routes>
-          <Route 
-            path="/" 
-            element={<HomePage onQuoteClick={() => handleQuoteRequest()} />} 
-          />
-          <Route 
-            path="/catalogo" 
-            element={<CatalogPage onQuoteRequest={handleQuoteRequest} />} 
-          />
-          <Route 
-            path="/catalogo/:categorySlug" 
-            element={<CatalogPage onQuoteRequest={handleQuoteRequest} />} 
-          />
-          <Route 
-            path="/producto/:productId" 
-            element={
-              <ProductPage 
-                onQuoteRequest={handleQuoteRequest}
-                onLoginClick={() => setIsLoginOpen(true)}
-              />
-            } 
-          />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route 
+              path="/" 
+              element={<HomePage onQuoteClick={() => handleQuoteRequest()} />} 
+            />
+            <Route 
+              path="/catalogo" 
+              element={<CatalogPage onQuoteRequest={handleQuoteRequest} />} 
+            />
+            <Route 
+              path="/catalogo/:categorySlug" 
+              element={<CatalogPage onQuoteRequest={handleQuoteRequest} />} 
+            />
+            <Route 
+              path="/producto/:productId" 
+              element={
+                <ProductPage 
+                  onQuoteRequest={handleQuoteRequest}
+                  onLoginClick={() => setIsLoginOpen(true)}
+                />
+              } 
+            />
+          </Routes>
+        </Suspense>
       </main>
       
       <Footer />

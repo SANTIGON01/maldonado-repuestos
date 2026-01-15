@@ -1,10 +1,22 @@
 import { motion } from 'framer-motion'
-import { Phone, Mail, MapPin, Facebook, Instagram, Youtube, ArrowUp } from 'lucide-react'
+import { Phone, Mail, MapPin, Facebook, Instagram, Youtube, ArrowUp, Star } from 'lucide-react'
+
+// Información del negocio
+const BUSINESS_INFO = {
+  phone: '0261 15-454-4128',
+  phoneLink: 'tel:+5492614544128',
+  email: 'ventas@maldonadorepuestos.com',
+  address: 'Carril Rodríguez Peña 2251',
+  city: 'M5515 Maipú, Mendoza',
+  googleRating: 4.7,
+  googleReviews: 118,
+  googleMapsUrl: 'https://maps.google.com/?q=Carril+Rodriguez+Peña+2251+Maipu+Mendoza',
+}
 
 const footerLinks = {
-  productos: ['Ejes y Mazas', 'Sistema de Frenos', 'Suspensión', 'Iluminación', 'Accesorios'],
-  empresa: ['Sobre Nosotros', 'Historia', 'Ubicación', 'Trabaja con Nosotros'],
-  ayuda: ['Preguntas Frecuentes', 'Métodos de Pago', 'Envíos', 'Garantías'],
+  productos: ['Ejes y Mazas', 'Sistema de Frenos', 'Suspensión', 'Iluminación', 'Bulonería', 'Herramientas'],
+  empresa: ['Sobre Nosotros', 'Historia', 'Ubicación'],
+  ayuda: ['Preguntas Frecuentes', 'Envíos', 'Garantías'],
 }
 
 export default function Footer() {
@@ -64,20 +76,45 @@ export default function Footer() {
               +25 años abasteciendo al transporte argentino.
             </p>
 
+            {/* Google Rating */}
+            <a 
+              href={BUSINESS_INFO.googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2 mb-6
+                       hover:bg-white/20 transition-colors group"
+            >
+              <div className="flex items-center gap-1">
+                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                <span className="font-display text-xl text-white">{BUSINESS_INFO.googleRating}</span>
+              </div>
+              <div className="text-white/60 text-xs">
+                <span className="text-white font-medium">({BUSINESS_INFO.googleReviews})</span> reseñas en Google
+              </div>
+            </a>
+
             {/* Contact info */}
             <div className="space-y-3">
-              <a href="tel:+541112345678" className="flex items-center gap-3 text-white/60 hover:text-white transition-colors">
+              <a href={BUSINESS_INFO.phoneLink} className="flex items-center gap-3 text-white/60 hover:text-white transition-colors">
                 <Phone className="w-4 h-4 text-maldonado-red-500" />
-                <span className="font-mono text-sm">+54 11 1234-5678</span>
+                <span className="font-mono text-sm">{BUSINESS_INFO.phone}</span>
               </a>
-              <a href="mailto:ventas@maldonadorepuestos.com" className="flex items-center gap-3 text-white/60 hover:text-white transition-colors">
+              <a href={`mailto:${BUSINESS_INFO.email}`} className="flex items-center gap-3 text-white/60 hover:text-white transition-colors">
                 <Mail className="w-4 h-4 text-maldonado-red-500" />
-                <span className="font-mono text-sm">ventas@maldonadorepuestos.com</span>
+                <span className="font-mono text-sm">{BUSINESS_INFO.email}</span>
               </a>
-              <div className="flex items-center gap-3 text-white/60">
-                <MapPin className="w-4 h-4 text-maldonado-red-500" />
-                <span className="font-mono text-sm">Av. Ejemplo 1234, Buenos Aires</span>
-              </div>
+              <a 
+                href={BUSINESS_INFO.googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-3 text-white/60 hover:text-white transition-colors"
+              >
+                <MapPin className="w-4 h-4 text-maldonado-red-500 mt-0.5" />
+                <div className="font-mono text-sm">
+                  <p>{BUSINESS_INFO.address}</p>
+                  <p className="text-white/40">{BUSINESS_INFO.city}</p>
+                </div>
+              </a>
             </div>
 
             {/* Social links */}

@@ -10,14 +10,18 @@ from app.database import Base
 
 class Product(Base):
     __tablename__ = "products"
+    __table_args__ = (
+        # Índices compuestos para búsquedas frecuentes
+        {'sqlite_autoincrement': True},
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=False)
+    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=False, index=True)
     
-    # Basic info
-    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    # Basic info - índices para búsquedas
+    name: Mapped[str] = mapped_column(String(200), nullable=False, index=True)
     code: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
-    brand: Mapped[str] = mapped_column(String(100), nullable=False)
+    brand: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     
     # Pricing
@@ -67,7 +71,13 @@ class Product(Base):
     )
     order_items: Mapped[list["OrderItem"]] = relationship(
         "OrderItem", 
-        back_populates="product"
+        back_populates="product",
+        passive_deletes=True
+    )
+    quote_items: Mapped[list["QuoteItem"]] = relationship(
+        "QuoteItem",
+        back_populates="product",
+        passive_deletes=True
     )
 
     @property

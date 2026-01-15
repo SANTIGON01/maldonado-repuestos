@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
   CircleDot, Disc, Lightbulb, Waves, Settings, Shield,
-  ChevronRight, Loader2, Package, Cog, Zap
+  ChevronRight, Loader2, Package, Cog, Zap, Wrench
 } from 'lucide-react'
 import api from '../lib/api'
 
@@ -20,6 +20,7 @@ const iconMap = {
   'Shield': Shield,
   'Cog': Cog,
   'Zap': Zap,
+  'Wrench': Wrench,
 }
 
 // Colores de fondo para cada categoría

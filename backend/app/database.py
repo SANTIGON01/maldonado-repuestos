@@ -6,11 +6,15 @@ from sqlalchemy.orm import DeclarativeBase
 from app.config import settings
 
 
-# Create async engine
+# Create async engine - optimizado para mejor performance
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=settings.DEBUG,
     future=True,
+    pool_pre_ping=True,  # Verifica conexiones antes de usarlas
+    pool_size=10,        # Conexiones en pool
+    max_overflow=20,     # Conexiones extras permitidas
+    pool_recycle=3600,   # Reciclar conexiones cada hora
 )
 
 # Create async session factory

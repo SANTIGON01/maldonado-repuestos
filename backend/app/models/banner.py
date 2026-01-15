@@ -20,6 +20,9 @@ class Banner(Base):
     # Imagen de fondo (URL o path)
     image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     
+    # Marca del producto (para mostrar logo)
+    brand: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    
     # Botón CTA
     button_text: Mapped[str | None] = mapped_column(String(50), nullable=True)
     button_link: Mapped[str | None] = mapped_column(String(200), nullable=True)

@@ -51,8 +51,9 @@ async def seed():
             {"name": "Sistema de Frenos", "slug": "frenos", "description": "Tambores, zapatas, pulmones, válvulas", "icon": "Disc", "display_order": 2},
             {"name": "Suspensión", "slug": "suspension", "description": "Elásticos, balancines, grilletes", "icon": "Waves", "display_order": 3},
             {"name": "Iluminación", "slug": "iluminacion", "description": "Faros, balizas, fichas, cables", "icon": "Lightbulb", "display_order": 4},
-            {"name": "Lonas y Carpas", "slug": "lonas-carpas", "description": "Lonas, herrajes, tensores, sogas", "icon": "Shield", "display_order": 5},
-            {"name": "Accesorios", "slug": "accesorios", "description": "King pin, patas, guardabarros", "icon": "Settings", "display_order": 6},
+            {"name": "Bulonería y Conexiones", "slug": "buloneria-conexiones", "description": "Bulones, tuercas, arandelas, conexiones", "icon": "Cog", "display_order": 5},
+            {"name": "Herramientas", "slug": "herramientas", "description": "Herramientas especiales para semirremolques", "icon": "Wrench", "display_order": 6},
+            {"name": "Accesorios", "slug": "accesorios", "description": "King pin, patas, guardabarros", "icon": "Settings", "display_order": 7},
         ]
         
         categories = {}
@@ -93,9 +94,12 @@ async def seed():
             {"category_slug": "accesorios", "name": "Guardabarro Plástico", "code": "GUA-PL-600", "brand": "GENERIC", "price": 18500, "stock": 30, "rating": 4.2},
             {"category_slug": "accesorios", "name": "Gancho de Cadena", "code": "GAN-CAD-10", "brand": "CROSBY", "price": 8500, "stock": 45, "rating": 4.5},
             
-            # Lonas
-            {"category_slug": "lonas-carpas", "name": "Lona 900gr/m2 (metro)", "code": "LON-900-MT", "brand": "SANSUY", "price": 4500, "stock": 200, "rating": 4.4},
-            {"category_slug": "lonas-carpas", "name": "Tensor de Lona", "code": "TEN-LON-50", "brand": "GENERIC", "price": 2500, "stock": 80, "rating": 4.3},
+            # Bulonería
+            {"category_slug": "buloneria-conexiones", "name": "Bulón de Rueda M22x1.5", "code": "BUL-RD-22", "brand": "GENERIC", "price": 1500, "stock": 200, "rating": 4.4},
+            {"category_slug": "buloneria-conexiones", "name": "Kit Conexiones Neumáticas", "code": "CON-NEU-KIT", "brand": "WABCO", "price": 12500, "stock": 30, "rating": 4.6},
+            # Herramientas
+            {"category_slug": "herramientas", "name": "Llave de Rueda 32mm", "code": "HER-LR-32", "brand": "GENERIC", "price": 8500, "stock": 25, "rating": 4.5},
+            {"category_slug": "herramientas", "name": "Torquímetro 200Nm", "code": "HER-TQ-200", "brand": "BAHCO", "price": 45000, "stock": 8, "rating": 4.8},
         ]
         
         for prod_data in products_data:
