@@ -5,7 +5,7 @@ import { Phone, Mail, MessageCircle, MapPin, Clock, Send, ArrowUpRight } from 'l
 const PHONE_NUMBER = '0261 15-454-4128'
 const PHONE_LINK = 'tel:+5492614544128'
 const WHATSAPP_NUMBER = '5492614544128'
-const EMAIL = 'ventas@maldonadorepuestos.com'
+const EMAIL = 'repuestos@maldonadosaci.com'
 const ADDRESS = 'Carril Rodríguez Peña 2251'
 const CITY = 'M5515 Maipú, Mendoza'
 const GOOGLE_MAPS_URL = 'https://maps.google.com/?q=Carril+Rodriguez+Peña+2251+Maipu+Mendoza'

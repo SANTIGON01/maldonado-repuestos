@@ -30,14 +30,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Lista de orígenes permitidos
-origins = [
+# Lista de orígenes permitidos (CORS)
+# En produccion, FRONTEND_URL apunta a Vercel (https://...)
+# En desarrollo, usa localhost
+_origins = [
     settings.FRONTEND_URL,
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
+    "http://localhost:5173",  # Vite default port
 ]
+# Filtrar duplicados y valores vacios
+origins = list(set(filter(None, _origins)))
 
 # CORS - Configuración ampliada
 app.add_middleware(

@@ -1,8 +1,10 @@
 """
 Configuration settings using Pydantic Settings
+Todas las variables sensibles se configuran via variables de entorno en produccion.
 """
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+import os
 
 
 class Settings(BaseSettings):
@@ -10,11 +12,16 @@ class Settings(BaseSettings):
     APP_NAME: str = "Maldonado Repuestos API"
     DEBUG: bool = False
     
-    # Database - PostgreSQL por defecto (local)
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:Santi2012@localhost:5432/maldonado"
+    # Database - Se configura via variable de entorno DATABASE_URL
+    # Railway genera automaticamente esta variable al agregar PostgreSQL
+    # Para desarrollo local, crear archivo .env con DATABASE_URL
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL", 
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/maldonado"
+    )
     
-    # Security
-    SECRET_KEY: str = "dev-secret-key-change-in-production"
+    # Security - IMPORTANTE: Cambiar en produccion via variable de entorno
+    SECRET_KEY: str = "dev-secret-key-change-in-production-use-64-chars"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
     
@@ -27,12 +34,22 @@ class Settings(BaseSettings):
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
     
-    # CORS
+    # CORS - URL del frontend (Vercel en produccion)
     FRONTEND_URL: str = "http://localhost:3000"
     
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+    
+    def get_database_url(self) -> str:
+        """Convierte DATABASE_URL de Railway (postgres://) a formato asyncpg"""
+        url = self.DATABASE_URL
+        # Railway usa postgres:// pero asyncpg necesita postgresql+asyncpg://
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+        elif url.startswith("postgresql://") and "+asyncpg" not in url:
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url
 
 
 @lru_cache()

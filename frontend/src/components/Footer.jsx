@@ -5,7 +5,7 @@ import { Phone, Mail, MapPin, Facebook, Instagram, Youtube, ArrowUp, Star } from
 const BUSINESS_INFO = {
   phone: '0261 15-454-4128',
   phoneLink: 'tel:+5492614544128',
-  email: 'ventas@maldonadorepuestos.com',
+  email: 'repuestos@maldonadosaci.com',
   address: 'Carril Rodríguez Peña 2251',
   city: 'M5515 Maipú, Mendoza',
   googleRating: 4.7,
@@ -73,7 +73,7 @@ export default function Footer() {
             
             <p className="font-body text-white/60 mb-8 max-w-sm">
               Tu proveedor de confianza en repuestos para semirremolques y acoplados. 
-              +25 años abasteciendo al transporte argentino.
+              +30 años abasteciendo al transporte argentino.
             </p>
 
             {/* Google Rating */}

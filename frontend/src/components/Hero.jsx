@@ -19,7 +19,7 @@ function IntroSlide() {
           <span className="inline-flex items-center gap-2 sm:gap-3 bg-maldonado-red-700 text-white 
                        px-3 sm:px-4 py-1.5 sm:py-2 font-mono text-xs sm:text-sm border-l-4 border-white">
             <span className="w-2 h-2 bg-white animate-pulse" />
-            +25 AÑOS EN EL RUBRO
+            +30 AÑOS EN EL RUBRO
           </span>
         </motion.div>
 
@@ -94,7 +94,7 @@ function IntroSlide() {
               {/* Mini badges flotantes móvil */}
               <div className="absolute -top-2 -right-2 bg-maldonado-red-700 text-white 
                             px-2 py-1 text-[10px] font-mono rounded-full border border-maldonado-red-600">
-                +25 AÑOS
+                +30 AÑOS
               </div>
             </div>
 

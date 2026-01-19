@@ -6,9 +6,12 @@ from sqlalchemy.orm import DeclarativeBase
 from app.config import settings
 
 
+# Obtener URL de base de datos (convierte formato Railway a asyncpg)
+database_url = settings.get_database_url()
+
 # Create async engine - optimizado para mejor performance
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    database_url,
     echo=settings.DEBUG,
     future=True,
     pool_pre_ping=True,  # Verifica conexiones antes de usarlas

@@ -92,7 +92,7 @@ export default function Features() {
                 </h2>
               </div>
               <p className="text-sm sm:text-base lg:text-lg text-maldonado-chrome max-w-md lg:text-right">
-                Más de <strong className="text-maldonado-dark">25 años</strong> abasteciendo al transporte argentino 
+                Más de <strong className="text-maldonado-dark">30 años</strong> abasteciendo al transporte argentino 
                 con repuestos de calidad y atención personalizada.
               </p>
             </div>
@@ -175,7 +175,7 @@ export default function Features() {
                   </div>
                   <div>
                     <p className="font-display text-xl sm:text-2xl lg:text-3xl text-white leading-tight">
-                      +25 AÑOS DE EXPERIENCIA
+                      +30 AÑOS DE EXPERIENCIA
                     </p>
                     <p className="text-white/60 text-xs sm:text-sm lg:text-base">
                       Miles de clientes satisfechos en todo el país
