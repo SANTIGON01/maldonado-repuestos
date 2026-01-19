@@ -4,6 +4,7 @@ Todas las variables sensibles se configuran via variables de entorno en producci
 En Railway, DATABASE_URL se configura automaticamente al agregar PostgreSQL.
 """
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 from functools import lru_cache
 
 
@@ -16,6 +17,14 @@ class Settings(BaseSettings):
     # Railway genera automaticamente esta variable al agregar PostgreSQL
     # En desarrollo local usa PostgreSQL local
     DATABASE_URL: str = "postgresql+asyncpg://postgres:Santi2012@localhost:5432/maldonado"
+    
+    @field_validator('DATABASE_URL', mode='before')
+    @classmethod
+    def strip_database_url(cls, v: str) -> str:
+        """Limpia espacios y saltos de línea de la URL de base de datos"""
+        if isinstance(v, str):
+            return v.strip()
+        return v
     
     # Security - IMPORTANTE: Cambiar en produccion via variable de entorno
     SECRET_KEY: str = "dev-secret-key-change-in-production-use-64-chars"
@@ -41,11 +50,13 @@ class Settings(BaseSettings):
     def get_database_url(self) -> str:
         """Convierte DATABASE_URL de Railway (postgres://) a formato asyncpg"""
         import os
-        url = self.DATABASE_URL
+        # IMPORTANTE: strip() para quitar espacios/saltos de línea invisibles
+        url = self.DATABASE_URL.strip()
         
         # Debug: ver qué URL está llegando (útil para diagnosticar en Railway)
         env_url = os.getenv('DATABASE_URL', 'NOT SET')
         if env_url != 'NOT SET':
+            env_url = env_url.strip()  # Limpiar también aquí
             # Ocultar password en logs
             safe_url = env_url.split('@')[1] if '@' in env_url else env_url[:30]
             print(f"[Config] DATABASE_URL from env: ...@{safe_url}")
