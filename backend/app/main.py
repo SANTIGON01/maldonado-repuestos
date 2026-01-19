@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from app.config import settings
+from sqlalchemy import text
 from app.database import create_tables
 from app.api import api_router
 import traceback
@@ -18,29 +19,45 @@ async def lifespan(app: FastAPI):
     import asyncio
     import os
     
+    is_production = os.getenv('RAILWAY_ENVIRONMENT') is not None
+    run_create_tables = os.getenv('RUN_CREATE_TABLES', 'false').lower() == 'true'
+    
     # Mostrar info de ambiente
-    print(f"[Startup] Ambiente: {'PRODUCTION (Railway)' if os.getenv('RAILWAY_ENVIRONMENT') else 'DEVELOPMENT'}")
+    print(f"[Startup] Ambiente: {'PRODUCTION (Railway)' if is_production else 'DEVELOPMENT'}")
     print(f"[Startup] FRONTEND_URL: {settings.FRONTEND_URL}")
+    print(f"[Startup] RUN_CREATE_TABLES: {run_create_tables}")
     
-    # Retry de conexión a DB (Railway puede tardar en tener PostgreSQL listo)
-    max_retries = 5
-    retry_delay = 3
+    # En producción, solo crear tablas si se pide explícitamente
+    # En desarrollo, siempre crear tablas
+    should_create_tables = run_create_tables or not is_production
     
-    for attempt in range(max_retries):
-        try:
-            print(f"[Startup] Conectando a DB (intento {attempt + 1}/{max_retries})...")
-            await create_tables()
-            print("[Startup] ✓ Conexión a DB exitosa!")
-            break
-        except Exception as e:
-            print(f"[Startup] ✗ Error conectando a DB: {type(e).__name__}: {e}")
-            if attempt < max_retries - 1:
-                print(f"[Startup] Reintentando en {retry_delay} segundos...")
-                await asyncio.sleep(retry_delay)
-                retry_delay *= 2  # Backoff exponencial
-            else:
-                print("[Startup] ✗ No se pudo conectar a la DB después de varios intentos")
-                raise
+    if should_create_tables:
+        # Retry de conexión a DB (Railway puede tardar en tener PostgreSQL listo)
+        max_retries = 5
+        retry_delay = 3
+        
+        for attempt in range(max_retries):
+            try:
+                print(f"[Startup] Conectando a DB (intento {attempt + 1}/{max_retries})...")
+                await create_tables()
+                print("[Startup] ✓ Conexión a DB exitosa y tablas verificadas!")
+                break
+            except Exception as e:
+                print(f"[Startup] ✗ Error conectando a DB: {type(e).__name__}: {e}")
+                if attempt < max_retries - 1:
+                    print(f"[Startup] Reintentando en {retry_delay} segundos...")
+                    await asyncio.sleep(retry_delay)
+                    retry_delay *= 2  # Backoff exponencial
+                else:
+                    print("[Startup] ✗ No se pudo conectar a la DB después de varios intentos")
+                    raise
+    else:
+        print("[Startup] Saltando create_tables (producción con datos migrados)")
+        # Solo verificamos conexión sin crear tablas
+        from app.database import engine
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+        print("[Startup] ✓ Conexión a DB verificada!")
     
     yield
     # Shutdown: cleanup if needed
