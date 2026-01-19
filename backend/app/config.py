@@ -1,10 +1,10 @@
 """
 Configuration settings using Pydantic Settings
 Todas las variables sensibles se configuran via variables de entorno en produccion.
+En Railway, DATABASE_URL se configura automaticamente al agregar PostgreSQL.
 """
 from pydantic_settings import BaseSettings
 from functools import lru_cache
-import os
 
 
 class Settings(BaseSettings):
@@ -14,11 +14,8 @@ class Settings(BaseSettings):
     
     # Database - Se configura via variable de entorno DATABASE_URL
     # Railway genera automaticamente esta variable al agregar PostgreSQL
-    # Para desarrollo local, crear archivo .env con DATABASE_URL
-    DATABASE_URL: str = os.getenv(
-        "DATABASE_URL", 
-        "postgresql+asyncpg://postgres:postgres@localhost:5432/maldonado"
-    )
+    # En desarrollo local usa PostgreSQL local
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:Santi2012@localhost:5432/maldonado"
     
     # Security - IMPORTANTE: Cambiar en produccion via variable de entorno
     SECRET_KEY: str = "dev-secret-key-change-in-production-use-64-chars"
