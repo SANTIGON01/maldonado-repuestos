@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   ChevronRight, ShoppingCart, Star, 
   Package, Truck, Shield, ArrowLeft, Plus, Minus,
-  Check, AlertCircle, ChevronLeft, ZoomIn
+  Check, ChevronLeft, ZoomIn
 } from 'lucide-react'
 import api from '../lib/api'
 import { useLocalCartStore } from '../store/localCartStore'
@@ -331,44 +331,32 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                 )}
               </div>
 
-              {/* Stock Status */}
+              {/* Stock Status - simplificado */}
               <div className="flex items-center gap-2 mb-4 sm:mb-6">
-                {product.in_stock ? (
-                  <>
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
-                    <span className="text-green-600 font-heading text-sm sm:text-base">
-                      EN STOCK ({product.stock} disponibles)
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
-                    <span className="text-orange-600 font-heading text-sm sm:text-base">
-                      SIN STOCK - Consultar
-                    </span>
-                  </>
-                )}
+                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
+                <span className="text-green-600 font-heading text-sm sm:text-base">
+                  EN STOCK
+                </span>
               </div>
 
               {/* Quantity & Add to Cart */}
-              {product.in_stock && (
-                <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
-                  {/* Quantity */}
-                  <div className="flex items-center justify-center border-2 border-maldonado-dark rounded-lg">
-                    <button
-                      onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                      className="p-2.5 sm:p-3 hover:bg-maldonado-light-gray transition-colors"
-                    >
-                      <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </button>
-                    <span className="px-4 sm:px-6 font-mono text-base sm:text-lg">{quantity}</span>
-                    <button
-                      onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                      className="p-2.5 sm:p-3 hover:bg-maldonado-light-gray transition-colors"
-                    >
-                      <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </button>
-                  </div>
+              <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
+                {/* Quantity */}
+                <div className="flex items-center justify-center border-2 border-maldonado-dark rounded-lg">
+                  <button
+                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                    className="p-2.5 sm:p-3 hover:bg-maldonado-light-gray transition-colors"
+                  >
+                    <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                  <span className="px-4 sm:px-6 font-mono text-base sm:text-lg">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(q => Math.min(99, q + 1))}
+                    className="p-2.5 sm:p-3 hover:bg-maldonado-light-gray transition-colors"
+                  >
+                    <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                </div>
 
                   {/* Add to Cart Button */}
                   <button
@@ -392,8 +380,7 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                       </>
                     )}
                   </button>
-                </div>
-              )}
+              </div>
 
               {/* Benefits */}
               <div className="mt-auto pt-4 sm:pt-6 border-t border-maldonado-light-gray">
