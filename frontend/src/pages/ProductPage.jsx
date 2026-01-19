@@ -5,9 +5,9 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  ChevronRight, ShoppingCart, FileText, Star, 
+  ChevronRight, ShoppingCart, Star, 
   Package, Truck, Shield, ArrowLeft, Plus, Minus,
-  Check, AlertCircle, Share2, ChevronLeft, ZoomIn
+  Check, AlertCircle, ChevronLeft, ZoomIn
 } from 'lucide-react'
 import api from '../lib/api'
 import { useLocalCartStore } from '../store/localCartStore'
@@ -394,17 +394,6 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                   </button>
                 </div>
               )}
-
-              {/* Quote Button */}
-              <button
-                onClick={() => onQuoteRequest?.(product)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 sm:px-6 
-                         border-2 border-maldonado-dark text-maldonado-dark font-display text-base sm:text-xl
-                         hover:bg-maldonado-dark hover:text-white transition-colors rounded-lg"
-              >
-                <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
-                <span className="text-sm sm:text-xl">COTIZAR</span>
-              </button>
 
               {/* Benefits */}
               <div className="mt-auto pt-4 sm:pt-6 border-t border-maldonado-light-gray">
