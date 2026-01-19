@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local files
+.env
+.env.local
+*.db
+*.sqlite3
+
+# Git
+.git/
+.gitignore
+
+# Docs
+*.md
+!README.md
+
+# Scripts de migración (no necesarios en producción)
+migrate_*.py
+fix_*.py
+check_*.py
+update_*.py
+add_*.py
+init_*.py
+load_products.py
+seed_data.py
