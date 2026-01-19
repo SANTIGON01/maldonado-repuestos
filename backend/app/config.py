@@ -40,7 +40,18 @@ class Settings(BaseSettings):
     
     def get_database_url(self) -> str:
         """Convierte DATABASE_URL de Railway (postgres://) a formato asyncpg"""
+        import os
         url = self.DATABASE_URL
+        
+        # Debug: ver qué URL está llegando (útil para diagnosticar en Railway)
+        env_url = os.getenv('DATABASE_URL', 'NOT SET')
+        if env_url != 'NOT SET':
+            # Ocultar password en logs
+            safe_url = env_url.split('@')[1] if '@' in env_url else env_url[:30]
+            print(f"[Config] DATABASE_URL from env: ...@{safe_url}")
+        else:
+            print(f"[Config] DATABASE_URL: usando valor por defecto (localhost)")
+        
         # Railway usa postgres:// pero asyncpg necesita postgresql+asyncpg://
         if url.startswith("postgres://"):
             url = url.replace("postgres://", "postgresql+asyncpg://", 1)
