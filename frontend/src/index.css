@@ -10,21 +10,21 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    /* Escala global al 85% - simula zoom 80-85% para vista más compacta */
-    font-size: 14px;
+    /* Escala global al 90% - vista más compacta pero legible */
+    font-size: 14.5px;
   }
   
-  /* En pantallas grandes, un poco más grande */
+  /* En pantallas grandes (1280px+), un poco más grande */
   @media (min-width: 1280px) {
     html {
-      font-size: 14.5px;
+      font-size: 15px;
     }
   }
   
-  /* En pantallas muy grandes (monitores 1440p+), tamaño normal */
+  /* En pantallas muy grandes (1536px+), casi normal */
   @media (min-width: 1536px) {
     html {
-      font-size: 15px;
+      font-size: 15.5px;
     }
   }
   
