@@ -1,9 +1,10 @@
 """
 Product Model
+Optimizado con índices para consultas frecuentes
 """
 from datetime import datetime
 from decimal import Decimal
-from sqlalchemy import String, Text, DateTime, ForeignKey, Numeric, Integer
+from sqlalchemy import String, Text, DateTime, ForeignKey, Numeric, Integer, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
@@ -12,6 +13,10 @@ class Product(Base):
     __tablename__ = "products"
     __table_args__ = (
         # Índices compuestos para búsquedas frecuentes
+        Index('ix_products_active_category', 'is_active', 'category_id'),
+        Index('ix_products_active_featured', 'is_active', 'is_featured'),
+        Index('ix_products_active_created', 'is_active', 'created_at'),
+        Index('ix_products_active_price', 'is_active', 'price'),
         {'sqlite_autoincrement': True},
     )
 

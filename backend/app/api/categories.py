@@ -1,7 +1,8 @@
 """
 Categories API Routes (Public)
+Optimizado con cache headers para mejor rendimiento
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from app.database import get_db
@@ -14,10 +15,14 @@ router = APIRouter()
 
 @router.get("", response_model=list[CategoryResponse])
 async def list_categories(
+    response: Response,
     active_only: bool = True,
     db: AsyncSession = Depends(get_db)
 ):
     """List all categories with product count"""
+    # Cache por 5 minutos (datos que cambian poco)
+    response.headers["Cache-Control"] = "public, max-age=300"
+    
     query = select(Category)
     
     if active_only:

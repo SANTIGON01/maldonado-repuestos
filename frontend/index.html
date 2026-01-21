@@ -4,21 +4,52 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Maldonado Repuestos - Especialistas en repuestos para semirremolques y acoplados. +25 años de experiencia." />
+    <meta name="description" content="Maldonado Repuestos - Especialistas en repuestos para semirremolques y acoplados. +30 años de experiencia." />
     
-    <!-- Preconnect para API (mejora tiempo de respuesta) -->
-    <link rel="preconnect" href="http://localhost:8000" crossorigin>
-    <link rel="dns-prefetch" href="http://localhost:8000">
-    
-    <!-- Fonts distintivas -->
+    <!-- Performance: Preconnect a servicios externos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+    
+    <!-- DNS prefetch para API de producción -->
+    <link rel="dns-prefetch" href="https://maldonado-repuestos-production.up.railway.app">
+    
+    <!-- Fonts: display=swap para evitar bloqueo de renderizado -->
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
     <!-- Precarga de recursos críticos -->
-    <link rel="preload" href="/unnamed.jpg" as="image">
+    <link rel="preload" href="/unnamed.jpg" as="image" fetchpriority="high">
+    
+    <!-- PWA: Theme color para móviles -->
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <title>MALDONADO REPUESTOS | Semirremolques & Acoplados</title>
+    
+    <!-- Critical CSS inline para evitar FOUC -->
+    <style>
+      /* Loading inicial mientras carga React */
+      #root:empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #1a1a1a;
+      }
+      #root:empty::after {
+        content: '';
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255,255,255,0.1);
+        border-top-color: #dc2626;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

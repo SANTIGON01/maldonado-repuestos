@@ -1,6 +1,9 @@
 /**
  * API Client for Maldonado Repuestos Backend
+ * Optimizado con cache para mejor rendimiento
  */
+
+import { cachedFetch, clearCache } from './cache'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
@@ -105,13 +108,29 @@ class ApiClient {
     this.removeToken()
   }
 
-  // Categories
+  // Categories (con cache - cambian poco)
   async getCategories(activeOnly = true) {
-    return this.request(`/categories?active_only=${activeOnly}`)
+    const cacheKey = `categories_${activeOnly}`
+    return cachedFetch(
+      cacheKey,
+      () => this.request(`/categories?active_only=${activeOnly}`),
+      'categories'
+    )
   }
 
   async getCategory(slug) {
-    return this.request(`/categories/${slug}`)
+    const cacheKey = `category_${slug}`
+    return cachedFetch(
+      cacheKey,
+      () => this.request(`/categories/${slug}`),
+      'categories'
+    )
+  }
+  
+  // Limpiar cache de categorías (llamar después de crear/editar)
+  clearCategoriesCache() {
+    clearCache('categories')
+    clearCache('category_')
   }
 
   // Products
@@ -214,13 +233,27 @@ class ApiClient {
     return this.request('/quotes/my-quotes')
   }
 
-  // Banners
+  // Banners (con cache - cambian poco)
   async getBanners(activeOnly = true) {
-    return this.request(`/banners?active_only=${activeOnly}`)
+    const cacheKey = `banners_${activeOnly}`
+    return cachedFetch(
+      cacheKey,
+      () => this.request(`/banners?active_only=${activeOnly}`),
+      'banners'
+    )
   }
 
   async getAllBanners() {
-    return this.request('/banners/all')
+    return cachedFetch(
+      'banners_all',
+      () => this.request('/banners/all'),
+      'banners'
+    )
+  }
+  
+  // Limpiar cache de banners
+  clearBannersCache() {
+    clearCache('banners')
   }
 
   async createBanner(bannerData) {
