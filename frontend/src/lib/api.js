@@ -240,6 +240,30 @@ class ApiClient {
   async deleteBanner(id) {
     return this.request(`/banners/${id}`, { method: 'DELETE' })
   }
+
+  // Upload de imágenes
+  async uploadImage(file) {
+    const url = `${this.baseUrl}/uploads/image`
+    const token = this.getToken()
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+      },
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.detail || 'Error al subir la imagen')
+    }
+
+    return response.json()
+  }
 }
 
 export const api = new ApiClient()

@@ -43,6 +43,12 @@ class Settings(BaseSettings):
     # CORS - URL del frontend (Vercel en produccion)
     FRONTEND_URL: str = "http://localhost:3000"
     
+    # Cloudinary - Para almacenamiento de imágenes en producción
+    # Crear cuenta gratis en https://cloudinary.com
+    CLOUDINARY_CLOUD_NAME: str = ""
+    CLOUDINARY_API_KEY: str = ""
+    CLOUDINARY_API_SECRET: str = ""
+    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

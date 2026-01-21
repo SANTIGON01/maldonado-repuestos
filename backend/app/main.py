@@ -2,10 +2,12 @@
 Maldonado Repuestos - FastAPI Backend
 """
 from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from sqlalchemy import text
 from app.database import create_tables
@@ -40,16 +42,16 @@ async def lifespan(app: FastAPI):
             try:
                 print(f"[Startup] Conectando a DB (intento {attempt + 1}/{max_retries})...")
                 await create_tables()
-                print("[Startup] ✓ Conexión a DB exitosa y tablas verificadas!")
+                print("[Startup] OK - Conexion a DB exitosa y tablas verificadas!")
                 break
             except Exception as e:
-                print(f"[Startup] ✗ Error conectando a DB: {type(e).__name__}: {e}")
+                print(f"[Startup] ERROR - Error conectando a DB: {type(e).__name__}: {e}")
                 if attempt < max_retries - 1:
                     print(f"[Startup] Reintentando en {retry_delay} segundos...")
                     await asyncio.sleep(retry_delay)
                     retry_delay *= 2  # Backoff exponencial
                 else:
-                    print("[Startup] ✗ No se pudo conectar a la DB después de varios intentos")
+                    print("[Startup] ERROR - No se pudo conectar a la DB despues de varios intentos")
                     raise
     else:
         print("[Startup] Saltando create_tables (producción con datos migrados)")
@@ -57,7 +59,7 @@ async def lifespan(app: FastAPI):
         from app.database import engine
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
-        print("[Startup] ✓ Conexión a DB verificada!")
+        print("[Startup] OK - Conexion a DB verificada!")
     
     yield
     # Shutdown: cleanup if needed
@@ -118,6 +120,12 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Include API routes
 app.include_router(api_router, prefix="/api")
+
+# Configurar carpeta de uploads para servir imágenes estáticas
+uploads_dir = Path("uploads")
+uploads_dir.mkdir(exist_ok=True)
+(uploads_dir / "products").mkdir(exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
 @app.get("/")

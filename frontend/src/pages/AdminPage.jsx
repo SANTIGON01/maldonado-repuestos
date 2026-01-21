@@ -1,7 +1,7 @@
 /**
  * Admin Dashboard - Gestión de Productos y Categorías
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -23,6 +23,7 @@ import {
   Sparkles,
   Eye,
   EyeOff,
+  Loader2,
 } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import api from '../lib/api'
@@ -632,6 +633,9 @@ function ProductForm({ product, categories, onSave, onCancel }) {
 
   const [images, setImages] = useState(initialImages)
   const [newImageUrl, setNewImageUrl] = useState('')
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const fileInputRef = useRef(null)
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -641,7 +645,7 @@ function ProductForm({ product, categories, onSave, onCancel }) {
     }))
   }
 
-  // Agregar nueva imagen
+  // Agregar nueva imagen por URL
   const handleAddImage = () => {
     if (newImageUrl.trim()) {
       setImages(prev => [
@@ -653,6 +657,57 @@ function ProductForm({ product, categories, onSave, onCancel }) {
         }
       ])
       setNewImageUrl('')
+    }
+  }
+
+  // Subir imagen desde archivo
+  const handleFileUpload = async (e) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setIsUploading(true)
+    setUploadError('')
+
+    for (const file of files) {
+      // Validar tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        setUploadError('Solo se permiten archivos de imagen (PNG, JPG, GIF, WebP)')
+        continue
+      }
+
+      // Validar tamaño (5MB máximo)
+      if (file.size > 5 * 1024 * 1024) {
+        setUploadError('El archivo es demasiado grande. Máximo 5MB')
+        continue
+      }
+
+      try {
+        const result = await api.uploadImage(file)
+        
+        // Si es Cloudinary, la URL ya es completa. Si es local, construir la URL
+        let fullImageUrl = result.image_url
+        if (result.storage === 'local') {
+          const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:8000'
+          fullImageUrl = `${backendUrl}${result.image_url}`
+        }
+        
+        setImages(prev => [
+          ...prev,
+          {
+            image_url: fullImageUrl,
+            is_primary: prev.length === 0,
+            alt_text: ''
+          }
+        ])
+      } catch (err) {
+        setUploadError(err.message || 'Error al subir la imagen')
+      }
+    }
+
+    setIsUploading(false)
+    // Limpiar el input para permitir subir el mismo archivo de nuevo
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
   }
 
@@ -911,7 +966,46 @@ function ProductForm({ product, categories, onSave, onCancel }) {
             </div>
           )}
 
-          {/* Agregar nueva imagen */}
+          {/* Subir imagen desde archivo */}
+          <div className="border-2 border-dashed border-maldonado-light-gray p-4 rounded-lg bg-zinc-50">
+            <div className="flex flex-col sm:flex-row gap-3 items-center">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+                multiple
+                onChange={handleFileUpload}
+                className="hidden"
+                id="file-upload"
+              />
+              <label
+                htmlFor="file-upload"
+                className={`flex items-center gap-2 px-4 py-2 bg-maldonado-red text-white font-heading 
+                         cursor-pointer hover:bg-red-700 transition-colors
+                         ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    SUBIENDO...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-5 h-5" />
+                    SUBIR DESDE PC
+                  </>
+                )}
+              </label>
+              <span className="text-sm text-maldonado-chrome">
+                PNG, JPG, GIF o WebP (máx. 5MB)
+              </span>
+            </div>
+            {uploadError && (
+              <p className="text-red-500 text-sm mt-2">{uploadError}</p>
+            )}
+          </div>
+
+          {/* Agregar imagen por URL */}
           <div className="flex gap-2">
             <input
               type="url"
@@ -919,7 +1013,7 @@ function ProductForm({ product, categories, onSave, onCancel }) {
               onChange={(e) => setNewImageUrl(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddImage())}
               className="flex-1 border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
-              placeholder="Pegar URL de imagen y presionar Agregar"
+              placeholder="O pegar URL de imagen..."
             />
             <button
               type="button"
@@ -928,9 +1022,10 @@ function ProductForm({ product, categories, onSave, onCancel }) {
               className="px-4 py-2 bg-maldonado-dark text-white font-heading hover:bg-maldonado-red 
                        disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              + AGREGAR
+              + URL
             </button>
           </div>
+          
           <p className="text-xs text-maldonado-chrome">
             La primera imagen será la principal. Podés agregar múltiples imágenes del producto.
           </p>

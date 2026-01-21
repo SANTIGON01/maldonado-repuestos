@@ -52,6 +52,9 @@ tmpclaude-*
 *.sqlite
 *.sqlite3
 
+# Uploads (imágenes subidas localmente - en producción se usa Cloudinary)
+backend/uploads/
+
 # Secrets (nunca subir)
 *.pem
 *.key
