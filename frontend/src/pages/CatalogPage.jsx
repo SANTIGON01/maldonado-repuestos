@@ -336,7 +336,7 @@ export default function CatalogPage({ onQuoteRequest }) {
       </div>
 
       {/* Products Grid */}
-      <div className="container-custom py-4 sm:py-8 px-4">
+      <div className="container-wide py-4 sm:py-8 px-4">
         {isLoading ? (
           <ProductGridSkeleton count={12} viewMode={viewMode} />
         ) : products.length === 0 ? (
@@ -357,9 +357,9 @@ export default function CatalogPage({ onQuoteRequest }) {
           </div>
         ) : (
           <>
-            <div className={`grid gap-3 sm:gap-6 ${
+            <div className={`grid gap-3 sm:gap-4 lg:gap-5 ${
               viewMode === 'grid' 
-                ? 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+                ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6' 
                 : 'grid-cols-1'
             }`}>
               {products.map((product, index) => (

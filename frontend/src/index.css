@@ -10,6 +10,22 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Escala global al 85% - simula zoom 80-85% para vista más compacta */
+    font-size: 14px;
+  }
+  
+  /* En pantallas grandes, un poco más grande */
+  @media (min-width: 1280px) {
+    html {
+      font-size: 14.5px;
+    }
+  }
+  
+  /* En pantallas muy grandes (monitores 1440p+), tamaño normal */
+  @media (min-width: 1536px) {
+    html {
+      font-size: 15px;
+    }
   }
   
   body {
@@ -86,7 +102,12 @@
   }
 
   .container-custom {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Container extra ancho para catálogo */
+  .container-wide {
+    @apply max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8;
   }
 
   .text-outline {
