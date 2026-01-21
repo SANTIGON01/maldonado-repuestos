@@ -117,6 +117,11 @@ export default function CatalogPage({ onQuoteRequest }) {
     fetchProducts()
   }, [categorySlug, page, sortBy, inStockOnly, selectedBrand, searchTerm])
 
+  // Scroll al inicio cuando cambia la página (importante para móviles)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [page])
+
   // Get unique brands from products
   const brands = [...new Set(products.map(p => p.brand))].sort()
 
