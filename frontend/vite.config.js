@@ -11,13 +11,7 @@ export default defineConfig({
   build: {
     // Optimizaciones de producción
     target: 'es2020',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,  // Eliminar console.log en producción
-        drop_debugger: true,
-      },
-    },
+    minify: 'esbuild',  // esbuild viene incluido con Vite (terser requiere instalación aparte)
     // Mejor code splitting
     rollupOptions: {
       output: {
