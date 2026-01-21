@@ -26,11 +26,15 @@ MAX_FILE_SIZE = 5 * 1024 * 1024
 
 def is_cloudinary_configured():
     """Verifica si Cloudinary está configurado"""
-    return bool(
-        settings.CLOUDINARY_CLOUD_NAME and 
-        settings.CLOUDINARY_API_KEY and 
-        settings.CLOUDINARY_API_SECRET
-    )
+    import os
+    # Intentar desde settings primero, luego desde os.environ como fallback
+    cloud_name = settings.CLOUDINARY_CLOUD_NAME or os.getenv('CLOUDINARY_CLOUD_NAME', '')
+    api_key = settings.CLOUDINARY_API_KEY or os.getenv('CLOUDINARY_API_KEY', '')
+    api_secret = settings.CLOUDINARY_API_SECRET or os.getenv('CLOUDINARY_API_SECRET', '')
+    
+    is_configured = bool(cloud_name and api_key and api_secret)
+    print(f"[Cloudinary] Configured: {is_configured}, Cloud: {cloud_name[:4] if cloud_name else 'N/A'}...")
+    return is_configured
 
 
 def get_cloudinary():
@@ -55,14 +59,21 @@ def get_upload_dir():
 
 async def upload_to_cloudinary(file_contents: bytes, filename: str) -> str:
     """Sube una imagen a Cloudinary y retorna la URL"""
+    import os
     import cloudinary.uploader
     
-    # Configurar Cloudinary
+    # Configurar Cloudinary - usar os.environ como fallback
     import cloudinary
+    cloud_name = settings.CLOUDINARY_CLOUD_NAME or os.getenv('CLOUDINARY_CLOUD_NAME', '')
+    api_key = settings.CLOUDINARY_API_KEY or os.getenv('CLOUDINARY_API_KEY', '')
+    api_secret = settings.CLOUDINARY_API_SECRET or os.getenv('CLOUDINARY_API_SECRET', '')
+    
+    print(f"[Cloudinary Upload] Using cloud: {cloud_name}")
+    
     cloudinary.config(
-        cloud_name=settings.CLOUDINARY_CLOUD_NAME,
-        api_key=settings.CLOUDINARY_API_KEY,
-        api_secret=settings.CLOUDINARY_API_SECRET,
+        cloud_name=cloud_name,
+        api_key=api_key,
+        api_secret=api_secret,
         secure=True
     )
     
