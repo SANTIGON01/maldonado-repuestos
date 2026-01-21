@@ -58,10 +58,13 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
                 alt={product.name}
                 loading="lazy"
                 className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform"
+                onError={(e) => {
+                  e.target.style.display = 'none'
+                  e.target.nextSibling?.classList?.remove('hidden')
+                }}
               />
-            ) : (
-              <Package className="w-10 h-10 text-zinc-300" />
-            )}
+            ) : null}
+            <Package className={`w-10 h-10 text-zinc-300 ${product.image_url ? 'hidden' : ''}`} />
           </div>
 
           {/* Info */}
@@ -160,13 +163,17 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
                 alt={product.name}
                 loading="lazy"
                 className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                onError={(e) => {
+                  // Si la imagen falla, ocultar y mostrar placeholder
+                  e.target.parentElement.style.display = 'none'
+                  e.target.parentElement.nextSibling?.classList?.remove('hidden')
+                }}
               />
             </div>
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Package className="w-10 h-10 sm:w-16 sm:h-16 text-zinc-300" />
-            </div>
-          )}
+          ) : null}
+          <div className={`w-full h-full flex items-center justify-center ${product.image_url ? 'hidden' : ''}`}>
+            <Package className="w-10 h-10 sm:w-16 sm:h-16 text-zinc-300" />
+          </div>
 
           {/* Badges */}
           <div className="absolute top-2 sm:top-3 left-2 sm:left-3 flex flex-col gap-1">

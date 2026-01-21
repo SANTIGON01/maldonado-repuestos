@@ -153,16 +153,25 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
               {/* Imagen Principal */}
               <div className="relative aspect-square bg-maldonado-light-gray overflow-hidden">
                 {currentImage ? (
-                  <motion.img
-                    key={selectedImageIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    src={currentImage}
-                    alt={product.name}
-                    className="w-full h-full object-contain cursor-zoom-in"
-                    onClick={() => setShowZoom(true)}
-                  />
+                  <>
+                    <motion.img
+                      key={selectedImageIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                      src={currentImage}
+                      alt={product.name}
+                      className="w-full h-full object-contain cursor-zoom-in"
+                      onClick={() => setShowZoom(true)}
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                        e.target.nextSibling?.classList?.remove('hidden')
+                      }}
+                    />
+                    <div className="hidden w-full h-full flex items-center justify-center">
+                      <Package className="w-20 h-20 sm:w-32 sm:h-32 text-maldonado-chrome" />
+                    </div>
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Package className="w-20 h-20 sm:w-32 sm:h-32 text-maldonado-chrome" />
