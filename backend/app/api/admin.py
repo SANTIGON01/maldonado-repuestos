@@ -20,6 +20,8 @@ from app.schemas.order import OrderResponse, OrderListResponse, OrderStatusUpdat
 from app.schemas.quote import QuoteUpdate, QuoteResponse, QuoteListResponse
 from app.schemas.user import UserResponse, UserAdminUpdate
 from app.utils.dependencies import get_admin_user
+from app.services.cloudinary_service import cloudinary_service
+from fastapi import UploadFile, File
 
 router = APIRouter()
 
@@ -468,24 +470,62 @@ async def update_product(
     return product_to_response(product)
 
 
+# --- Image Upload ---
+
+class ImageUploadResponse(BaseModel):
+    url: str
+    public_id: str
+    width: int | None = None
+    height: int | None = None
+    format: str | None = None
+
+
+@router.post("/upload-image", response_model=ImageUploadResponse)
+async def upload_image(
+    file: UploadFile = File(...),
+    admin: User = Depends(get_admin_user),
+):
+    """
+    Upload an image to Cloudinary
+
+    - **file**: Image file (jpg, png, webp - max 5MB)
+    - Returns: Image URL and public_id for deletion
+    """
+    result = await cloudinary_service.upload_image(file, folder="products")
+
+    return ImageUploadResponse(
+        url=result["url"],
+        public_id=result["public_id"],
+        width=result.get("width"),
+        height=result.get("height"),
+        format=result.get("format")
+    )
+
+
 @router.delete("/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_product(
     product_id: int,
     admin: User = Depends(get_admin_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """Delete a product"""
+    """Delete a product and its associated images from Cloudinary"""
     result = await db.execute(
-        select(Product).where(Product.id == product_id)
+        select(Product).options(selectinload(Product.images)).where(Product.id == product_id)
     )
     product = result.scalar_one_or_none()
-    
+
     if not product:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Producto no encontrado"
         )
-    
+
+    # Eliminar imágenes de Cloudinary antes de borrar el producto
+    if product.images:
+        public_ids = [img.public_id for img in product.images if img.public_id]
+        if public_ids:
+            await cloudinary_service.delete_images(public_ids)
+
     await db.delete(product)
     await db.commit()
 

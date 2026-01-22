@@ -15,7 +15,10 @@ class ProductImage(Base):
     
     # URL de la imagen
     image_url: Mapped[str] = mapped_column(String(500), nullable=False)
-    
+
+    # ID público de Cloudinary (para poder eliminar la imagen)
+    public_id: Mapped[str | None] = mapped_column(String(200), nullable=True)
+
     # Orden de visualización (0 = imagen principal)
     display_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     

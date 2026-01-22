@@ -137,6 +137,33 @@ class ApiClient {
     return this.request(`/products/code/${code}`)
   }
 
+  // Admin - Image Upload
+  async uploadProductImage(file) {
+    const token = this.getToken()
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch(`${this.baseUrl}/admin/upload-image`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData,
+    })
+
+    if (response.status === 401) {
+      this.removeToken()
+      throw new Error('Sesión expirada. Por favor, iniciá sesión nuevamente.')
+    }
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}))
+      throw new Error(error.detail || 'Error al subir imagen')
+    }
+
+    return response.json()
+  }
+
   // Cart
   async getCart() {
     return this.request('/cart')

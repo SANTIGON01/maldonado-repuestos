@@ -16,6 +16,15 @@ async def lifespan(app: FastAPI):
     """Startup and shutdown events"""
     # Startup: Create tables
     await create_tables()
+
+    # Log de configuración de Cloudinary
+    print("=" * 60)
+    print("[STARTUP] Verificando configuración de Cloudinary...")
+    print(f"[STARTUP] CLOUDINARY_CLOUD_NAME: {settings.CLOUDINARY_CLOUD_NAME or 'NO CONFIGURADO'}")
+    print(f"[STARTUP] CLOUDINARY_API_KEY: {'Configurado' if settings.CLOUDINARY_API_KEY else 'NO CONFIGURADO'}")
+    print(f"[STARTUP] CLOUDINARY_API_SECRET: {'Configurado' if settings.CLOUDINARY_API_SECRET else 'NO CONFIGURADO'}")
+    print("=" * 60)
+
     yield
     # Shutdown: cleanup if needed
 
@@ -85,3 +94,30 @@ async def root():
 async def health_check():
     """API health check"""
     return {"status": "healthy"}
+
+
+@app.get("/debug/env")
+async def debug_environment():
+    """
+    Debug endpoint para verificar variables de entorno
+    SOLO PARA DESARROLLO - Eliminar en producción
+    """
+    import os
+
+    return {
+        "cloudinary_configured": bool(
+            settings.CLOUDINARY_CLOUD_NAME
+            and settings.CLOUDINARY_API_KEY
+            and settings.CLOUDINARY_API_SECRET
+        ),
+        "cloudinary_cloud_name": settings.CLOUDINARY_CLOUD_NAME or "NOT SET",
+        "cloudinary_api_key_present": bool(settings.CLOUDINARY_API_KEY),
+        "cloudinary_api_secret_present": bool(settings.CLOUDINARY_API_SECRET),
+        # Ver directamente desde os.environ
+        "env_cloud_name": os.getenv("CLOUDINARY_CLOUD_NAME", "NOT IN OS.ENVIRON"),
+        "env_api_key_present": bool(os.getenv("CLOUDINARY_API_KEY")),
+        "env_api_secret_present": bool(os.getenv("CLOUDINARY_API_SECRET")),
+        # Otras variables para verificar
+        "database_url_present": bool(settings.DATABASE_URL),
+        "frontend_url": settings.FRONTEND_URL,
+    }

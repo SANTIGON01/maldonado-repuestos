@@ -632,6 +632,10 @@ function ProductForm({ product, categories, onSave, onCancel }) {
 
   const [images, setImages] = useState(initialImages)
   const [newImageUrl, setNewImageUrl] = useState('')
+  const [uploadMode, setUploadMode] = useState('url') // 'file' | 'url'
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -685,6 +689,65 @@ function ProductForm({ product, categories, onSave, onCancel }) {
       [newArr[index], newArr[newIndex]] = [newArr[newIndex], newArr[index]]
       return newArr
     })
+  }
+
+  // Seleccionar archivo para upload
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0]
+    setUploadError('')
+
+    if (!file) return
+
+    // Validar tipo de archivo
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError('Tipo de archivo no permitido. Use JPG, PNG o WebP.')
+      return
+    }
+
+    // Validar tamaño (max 5MB)
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      setUploadError(`Archivo muy grande. Tamaño máximo: 5MB (actual: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`)
+      return
+    }
+
+    setSelectedFile(file)
+  }
+
+  // Subir imagen a Cloudinary
+  const handleUploadImage = async () => {
+    if (!selectedFile) return
+
+    setUploading(true)
+    setUploadError('')
+
+    try {
+      const result = await api.uploadProductImage(selectedFile)
+
+      // Agregar la imagen subida a la lista
+      setImages(prev => [
+        ...prev,
+        {
+          image_url: result.url,
+          public_id: result.public_id,
+          is_primary: prev.length === 0,
+          alt_text: formData.name || ''
+        }
+      ])
+
+      // Limpiar
+      setSelectedFile(null)
+      // Reset file input
+      const fileInput = document.getElementById('image-file-input')
+      if (fileInput) fileInput.value = ''
+
+    } catch (error) {
+      console.error('Error al subir imagen:', error)
+      setUploadError(error.message || 'Error al subir imagen')
+    } finally {
+      setUploading(false)
+    }
   }
 
   const handleSubmit = (e) => {
@@ -902,25 +965,100 @@ function ProductForm({ product, categories, onSave, onCancel }) {
           )}
 
           {/* Agregar nueva imagen */}
-          <div className="flex gap-2">
-            <input
-              type="url"
-              value={newImageUrl}
-              onChange={(e) => setNewImageUrl(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddImage())}
-              className="flex-1 border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
-              placeholder="Pegar URL de imagen y presionar Agregar"
-            />
-            <button
-              type="button"
-              onClick={handleAddImage}
-              disabled={!newImageUrl.trim()}
-              className="px-4 py-2 bg-maldonado-dark text-white font-heading hover:bg-maldonado-red 
-                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              + AGREGAR
-            </button>
+          <div className="space-y-3">
+            {/* Toggle entre Upload y URL */}
+            <div className="flex gap-2 border-b border-maldonado-light-gray pb-2">
+              <button
+                type="button"
+                onClick={() => setUploadMode('file')}
+                className={`flex-1 px-4 py-2 font-heading transition-colors ${
+                  uploadMode === 'file'
+                    ? 'bg-maldonado-red text-white'
+                    : 'bg-maldonado-light-gray text-maldonado-dark hover:bg-maldonado-chrome'
+                }`}
+              >
+                SUBIR ARCHIVO
+              </button>
+              <button
+                type="button"
+                onClick={() => setUploadMode('url')}
+                className={`flex-1 px-4 py-2 font-heading transition-colors ${
+                  uploadMode === 'url'
+                    ? 'bg-maldonado-red text-white'
+                    : 'bg-maldonado-light-gray text-maldonado-dark hover:bg-maldonado-chrome'
+                }`}
+              >
+                PEGAR URL
+              </button>
+            </div>
+
+            {/* Modo: Subir archivo */}
+            {uploadMode === 'file' && (
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <input
+                    id="image-file-input"
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleFileSelect}
+                    className="flex-1 border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none file:mr-4 file:py-1 file:px-3 file:border-0 file:bg-maldonado-dark file:text-white file:font-heading hover:file:bg-maldonado-red file:cursor-pointer"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleUploadImage}
+                    disabled={!selectedFile || uploading}
+                    className="px-4 py-2 bg-maldonado-red text-white font-heading hover:bg-maldonado-dark
+                             disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+                  >
+                    {uploading ? 'SUBIENDO...' : '↑ SUBIR'}
+                  </button>
+                </div>
+
+                {/* Preview del archivo seleccionado */}
+                {selectedFile && !uploading && (
+                  <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 text-green-700 text-sm">
+                    <span>✓</span>
+                    <span>{selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)</span>
+                  </div>
+                )}
+
+                {/* Error de upload */}
+                {uploadError && (
+                  <div className="p-2 bg-red-50 border border-red-200 text-red-700 text-sm">
+                    ✕ {uploadError}
+                  </div>
+                )}
+
+                <p className="text-xs text-maldonado-chrome">
+                  Formatos: JPG, PNG, WebP • Tamaño máximo: 5MB • Las imágenes se guardan en Cloudinary
+                </p>
+              </div>
+            )}
+
+            {/* Modo: Pegar URL */}
+            {uploadMode === 'url' && (
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddImage())}
+                  className="flex-1 border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
+                  placeholder="Pegar URL de imagen y presionar Agregar"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddImage}
+                  disabled={!newImageUrl.trim()}
+                  className="px-4 py-2 bg-maldonado-dark text-white font-heading hover:bg-maldonado-red
+                           disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  + AGREGAR
+                </button>
+              </div>
+            )}
           </div>
+
           <p className="text-xs text-maldonado-chrome">
             La primera imagen será la principal. Podés agregar múltiples imágenes del producto.
           </p>

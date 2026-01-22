@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 # === Product Image Schemas ===
 class ProductImageBase(BaseModel):
     image_url: str
+    public_id: str | None = None  # ID de Cloudinary para eliminar la imagen
     display_order: int = 0
     is_primary: bool = False
     alt_text: str | None = None
