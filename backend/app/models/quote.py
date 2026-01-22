@@ -73,7 +73,7 @@ class QuoteItem(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     quote_id: Mapped[int] = mapped_column(ForeignKey("quotes.id", ondelete="CASCADE"), nullable=False)
-    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"), nullable=False)
+    product_id: Mapped[int | None] = mapped_column(ForeignKey("products.id", ondelete="SET NULL"), nullable=True)
     
     # Guardamos código y nombre por si el producto cambia
     product_code: Mapped[str] = mapped_column(String(50), nullable=False)
@@ -83,5 +83,5 @@ class QuoteItem(Base):
     
     # Relationships
     quote: Mapped["Quote"] = relationship("Quote", back_populates="items")
-    product: Mapped["Product"] = relationship("Product")
+    product: Mapped["Product | None"] = relationship("Product", back_populates="quote_items")
 

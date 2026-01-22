@@ -2,7 +2,7 @@
 API Routes
 """
 from fastapi import APIRouter
-from app.api import auth, products, categories, cart, orders, quotes, payments, admin, banners
+from app.api import auth, products, categories, cart, orders, quotes, payments, admin, banners, uploads
 
 api_router = APIRouter()
 
@@ -15,4 +15,5 @@ api_router.include_router(quotes.router, prefix="/quotes", tags=["Cotizaciones"]
 api_router.include_router(payments.router, prefix="/payments", tags=["Pagos"])
 api_router.include_router(admin.router, prefix="/admin", tags=["Administración"])
 api_router.include_router(banners.router, tags=["Banners"])
+api_router.include_router(uploads.router, tags=["Uploads"])
 

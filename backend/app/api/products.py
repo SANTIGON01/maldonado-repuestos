@@ -1,7 +1,8 @@
 """
 Products API Routes (Public)
+Optimizado con cache headers para mejor rendimiento
 """
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, or_
 from sqlalchemy.orm import selectinload
@@ -42,6 +43,7 @@ def product_to_response(p: Product) -> ProductResponse:
 
 @router.get("", response_model=ProductListResponse)
 async def list_products(
+    response: Response,
     page: int = Query(1, ge=1),
     page_size: int = Query(12, ge=1, le=100),
     category_id: int | None = None,
@@ -57,6 +59,9 @@ async def list_products(
     db: AsyncSession = Depends(get_db)
 ):
     """List products with filters and pagination"""
+    # Cache por 1 minuto (datos que pueden cambiar)
+    response.headers["Cache-Control"] = "public, max-age=60"
+    
     query = select(Product).where(Product.is_active == True)
     
     # Category filter

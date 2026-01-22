@@ -1,7 +1,7 @@
 /**
  * Admin Dashboard - Gestión de Productos y Categorías
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -23,6 +23,7 @@ import {
   Sparkles,
   Eye,
   EyeOff,
+  Loader2,
 } from 'lucide-react'
 import { useAuthStore } from '../store/authStore'
 import api from '../lib/api'
@@ -632,10 +633,9 @@ function ProductForm({ product, categories, onSave, onCancel }) {
 
   const [images, setImages] = useState(initialImages)
   const [newImageUrl, setNewImageUrl] = useState('')
-  const [uploadMode, setUploadMode] = useState('url') // 'file' | 'url'
-  const [selectedFile, setSelectedFile] = useState(null)
-  const [uploading, setUploading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
+  const fileInputRef = useRef(null)
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -645,7 +645,7 @@ function ProductForm({ product, categories, onSave, onCancel }) {
     }))
   }
 
-  // Agregar nueva imagen
+  // Agregar nueva imagen por URL
   const handleAddImage = () => {
     if (newImageUrl.trim()) {
       setImages(prev => [
@@ -657,6 +657,57 @@ function ProductForm({ product, categories, onSave, onCancel }) {
         }
       ])
       setNewImageUrl('')
+    }
+  }
+
+  // Subir imagen desde archivo
+  const handleFileUpload = async (e) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setIsUploading(true)
+    setUploadError('')
+
+    for (const file of files) {
+      // Validar tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        setUploadError('Solo se permiten archivos de imagen (PNG, JPG, GIF, WebP)')
+        continue
+      }
+
+      // Validar tamaño (5MB máximo)
+      if (file.size > 5 * 1024 * 1024) {
+        setUploadError('El archivo es demasiado grande. Máximo 5MB')
+        continue
+      }
+
+      try {
+        const result = await api.uploadImage(file)
+        
+        // Si es Cloudinary, la URL ya es completa. Si es local, construir la URL
+        let fullImageUrl = result.image_url
+        if (result.storage === 'local') {
+          const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:8000'
+          fullImageUrl = `${backendUrl}${result.image_url}`
+        }
+        
+        setImages(prev => [
+          ...prev,
+          {
+            image_url: fullImageUrl,
+            is_primary: prev.length === 0,
+            alt_text: ''
+          }
+        ])
+      } catch (err) {
+        setUploadError(err.message || 'Error al subir la imagen')
+      }
+    }
+
+    setIsUploading(false)
+    // Limpiar el input para permitir subir el mismo archivo de nuevo
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
   }
 
@@ -691,74 +742,20 @@ function ProductForm({ product, categories, onSave, onCancel }) {
     })
   }
 
-  // Seleccionar archivo para upload
-  const handleFileSelect = (e) => {
-    const file = e.target.files?.[0]
-    setUploadError('')
-
-    if (!file) return
-
-    // Validar tipo de archivo
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
-    if (!allowedTypes.includes(file.type)) {
-      setUploadError('Tipo de archivo no permitido. Use JPG, PNG o WebP.')
-      return
-    }
-
-    // Validar tamaño (max 5MB)
-    const maxSize = 5 * 1024 * 1024
-    if (file.size > maxSize) {
-      setUploadError(`Archivo muy grande. Tamaño máximo: 5MB (actual: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`)
-      return
-    }
-
-    setSelectedFile(file)
-  }
-
-  // Subir imagen a Cloudinary
-  const handleUploadImage = async () => {
-    if (!selectedFile) return
-
-    setUploading(true)
-    setUploadError('')
-
-    try {
-      const result = await api.uploadProductImage(selectedFile)
-
-      // Agregar la imagen subida a la lista
-      setImages(prev => [
-        ...prev,
-        {
-          image_url: result.url,
-          public_id: result.public_id,
-          is_primary: prev.length === 0,
-          alt_text: formData.name || ''
-        }
-      ])
-
-      // Limpiar
-      setSelectedFile(null)
-      // Reset file input
-      const fileInput = document.getElementById('image-file-input')
-      if (fileInput) fileInput.value = ''
-
-    } catch (error) {
-      console.error('Error al subir imagen:', error)
-      setUploadError(error.message || 'Error al subir imagen')
-    } finally {
-      setUploading(false)
-    }
-  }
-
   const handleSubmit = (e) => {
     e.preventDefault()
     
     // La imagen principal (legacy) es la primera que esté marcada como primary
     const primaryImage = images.find(img => img.is_primary)?.image_url || images[0]?.image_url || ''
     
+    // Precio: si está vacío o es 0, enviamos 0 (mostrará "Consultar")
+    const priceValue = formData.price === '' || formData.price === null 
+      ? 0 
+      : parseFloat(formData.price)
+    
     onSave({
       ...formData,
-      price: parseFloat(formData.price) || 0,
+      price: priceValue,
       original_price: formData.original_price ? parseFloat(formData.original_price) : null,
       stock: parseInt(formData.stock) || 0,
       category_id: parseInt(formData.category_id),
@@ -835,18 +832,23 @@ function ProductForm({ product, categories, onSave, onCancel }) {
 
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block font-heading text-sm mb-1">PRECIO *</label>
+            <label className="block font-heading text-sm mb-1">
+              PRECIO
+              <span className="text-xs font-normal text-zinc-500 ml-2">(opcional)</span>
+            </label>
             <input
               type="number"
               name="price"
               value={formData.price}
               onChange={handleChange}
-              required
               min="0"
               step="0.01"
               className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
-              placeholder="0.00"
+              placeholder="0 = Consultar"
             />
+            <p className="text-xs text-zinc-500 mt-1">
+              Dejá vacío o 0 para mostrar "Consultar precio"
+            </p>
           </div>
           <div>
             <label className="block font-heading text-sm mb-1">PRECIO ANTERIOR</label>
@@ -964,101 +966,66 @@ function ProductForm({ product, categories, onSave, onCancel }) {
             </div>
           )}
 
-          {/* Agregar nueva imagen */}
-          <div className="space-y-3">
-            {/* Toggle entre Upload y URL */}
-            <div className="flex gap-2 border-b border-maldonado-light-gray pb-2">
-              <button
-                type="button"
-                onClick={() => setUploadMode('file')}
-                className={`flex-1 px-4 py-2 font-heading transition-colors ${
-                  uploadMode === 'file'
-                    ? 'bg-maldonado-red text-white'
-                    : 'bg-maldonado-light-gray text-maldonado-dark hover:bg-maldonado-chrome'
-                }`}
+          {/* Subir imagen desde archivo */}
+          <div className="border-2 border-dashed border-maldonado-light-gray p-4 rounded-lg bg-zinc-50">
+            <div className="flex flex-col sm:flex-row gap-3 items-center">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+                multiple
+                onChange={handleFileUpload}
+                className="hidden"
+                id="file-upload"
+              />
+              <label
+                htmlFor="file-upload"
+                className={`flex items-center gap-2 px-4 py-2 bg-maldonado-red text-white font-heading 
+                         cursor-pointer hover:bg-red-700 transition-colors
+                         ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                SUBIR ARCHIVO
-              </button>
-              <button
-                type="button"
-                onClick={() => setUploadMode('url')}
-                className={`flex-1 px-4 py-2 font-heading transition-colors ${
-                  uploadMode === 'url'
-                    ? 'bg-maldonado-red text-white'
-                    : 'bg-maldonado-light-gray text-maldonado-dark hover:bg-maldonado-chrome'
-                }`}
-              >
-                PEGAR URL
-              </button>
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    SUBIENDO...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-5 h-5" />
+                    SUBIR DESDE PC
+                  </>
+                )}
+              </label>
+              <span className="text-sm text-maldonado-chrome">
+                PNG, JPG, GIF o WebP (máx. 5MB)
+              </span>
             </div>
-
-            {/* Modo: Subir archivo */}
-            {uploadMode === 'file' && (
-              <div className="space-y-2">
-                <div className="flex gap-2">
-                  <input
-                    id="image-file-input"
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    onChange={handleFileSelect}
-                    className="flex-1 border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none file:mr-4 file:py-1 file:px-3 file:border-0 file:bg-maldonado-dark file:text-white file:font-heading hover:file:bg-maldonado-red file:cursor-pointer"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleUploadImage}
-                    disabled={!selectedFile || uploading}
-                    className="px-4 py-2 bg-maldonado-red text-white font-heading hover:bg-maldonado-dark
-                             disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
-                  >
-                    {uploading ? 'SUBIENDO...' : '↑ SUBIR'}
-                  </button>
-                </div>
-
-                {/* Preview del archivo seleccionado */}
-                {selectedFile && !uploading && (
-                  <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 text-green-700 text-sm">
-                    <span>✓</span>
-                    <span>{selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)</span>
-                  </div>
-                )}
-
-                {/* Error de upload */}
-                {uploadError && (
-                  <div className="p-2 bg-red-50 border border-red-200 text-red-700 text-sm">
-                    ✕ {uploadError}
-                  </div>
-                )}
-
-                <p className="text-xs text-maldonado-chrome">
-                  Formatos: JPG, PNG, WebP • Tamaño máximo: 5MB • Las imágenes se guardan en Cloudinary
-                </p>
-              </div>
-            )}
-
-            {/* Modo: Pegar URL */}
-            {uploadMode === 'url' && (
-              <div className="flex gap-2">
-                <input
-                  type="url"
-                  value={newImageUrl}
-                  onChange={(e) => setNewImageUrl(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddImage())}
-                  className="flex-1 border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
-                  placeholder="Pegar URL de imagen y presionar Agregar"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddImage}
-                  disabled={!newImageUrl.trim()}
-                  className="px-4 py-2 bg-maldonado-dark text-white font-heading hover:bg-maldonado-red
-                           disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  + AGREGAR
-                </button>
-              </div>
+            {uploadError && (
+              <p className="text-red-500 text-sm mt-2">{uploadError}</p>
             )}
           </div>
 
+          {/* Agregar imagen por URL */}
+          <div className="flex gap-2">
+            <input
+              type="url"
+              value={newImageUrl}
+              onChange={(e) => setNewImageUrl(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddImage())}
+              className="flex-1 border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
+              placeholder="O pegar URL de imagen..."
+            />
+            <button
+              type="button"
+              onClick={handleAddImage}
+              disabled={!newImageUrl.trim()}
+              className="px-4 py-2 bg-maldonado-dark text-white font-heading hover:bg-maldonado-red 
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              + URL
+            </button>
+          </div>
+          
           <p className="text-xs text-maldonado-chrome">
             La primera imagen será la principal. Podés agregar múltiples imágenes del producto.
           </p>
@@ -1358,6 +1325,7 @@ function BannerForm({ banner, onSave, onCancel }) {
     subtitle: banner?.subtitle || '',
     description: banner?.description || '',
     image_url: banner?.image_url || '',
+    brand: banner?.brand || '',
     button_text: banner?.button_text || 'VER MÁS',
     button_link: banner?.button_link || '/catalogo',
     banner_type: banner?.banner_type || 'promo',
@@ -1393,6 +1361,12 @@ function BannerForm({ banner, onSave, onCancel }) {
     { value: 'gradient-red', label: 'Rojo', color: 'bg-red-700' },
     { value: 'dark', label: 'Oscuro', color: 'bg-zinc-800' },
     { value: 'gradient-dark', label: 'Gris', color: 'bg-zinc-700' },
+  ]
+
+  // Lista de marcas disponibles
+  const availableBrands = [
+    'JOST', 'MASTER', 'SUSPENSYS', 'CASTERTECH', 'HYVA', 'FRASLE',
+    'SADAR', 'NEUMACARG', 'FERVI', 'BAIML', 'KINEDYNE', 'FESTO'
   ]
 
   return (
@@ -1474,6 +1448,25 @@ function BannerForm({ banner, onSave, onCancel }) {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Selector de marca */}
+        <div>
+          <label className="block font-heading text-sm mb-1">MARCA DEL PRODUCTO (para mostrar logo)</label>
+          <select
+            name="brand"
+            value={formData.brand}
+            onChange={handleChange}
+            className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none bg-white"
+          >
+            <option value="">Sin marca / No mostrar logo</option>
+            {availableBrands.map(brand => (
+              <option key={brand} value={brand}>{brand}</option>
+            ))}
+          </select>
+          <p className="text-xs text-maldonado-chrome mt-1">
+            Si seleccionas una marca, se mostrará el logo en el banner (debe existir en /brands/)
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

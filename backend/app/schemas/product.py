@@ -34,8 +34,8 @@ class ProductBase(BaseModel):
     code: str = Field(..., min_length=2, max_length=50)
     brand: str = Field(..., min_length=1, max_length=100)
     description: str | None = None
-    price: Decimal = Field(..., gt=0)
-    original_price: Decimal | None = Field(None, gt=0)
+    price: Decimal | None = Field(None, ge=0)  # Precio opcional (puede ser 0 o null para "consultar")
+    original_price: Decimal | None = Field(None, ge=0)
     stock: int = Field(0, ge=0)
     image_url: str | None = None  # Imagen principal (legacy, se mantiene por compatibilidad)
     is_active: bool = True
@@ -54,8 +54,8 @@ class ProductUpdate(BaseModel):
     code: str | None = Field(None, min_length=2, max_length=50)
     brand: str | None = Field(None, min_length=1, max_length=100)
     description: str | None = None
-    price: Decimal | None = Field(None, gt=0)
-    original_price: Decimal | None = None
+    price: Decimal | None = Field(None, ge=0)  # Puede ser 0 o null
+    original_price: Decimal | None = Field(None, ge=0)
     stock: int | None = Field(None, ge=0)
     image_url: str | None = None
     is_active: bool | None = None

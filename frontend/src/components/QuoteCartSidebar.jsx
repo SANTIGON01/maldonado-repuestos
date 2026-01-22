@@ -29,17 +29,17 @@ export default function QuoteCartSidebar({ isOpen, onClose, onRequestQuote }) {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white 
-                     shadow-2xl z-50 flex flex-col rounded-l-2xl overflow-hidden"
+            className="fixed right-0 top-0 h-full w-full sm:max-w-md bg-white 
+                     shadow-2xl z-50 flex flex-col sm:rounded-l-2xl overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-maldonado-dark text-white px-6 py-5 flex items-center justify-between">
+            <div className="bg-maldonado-dark text-white px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="bg-maldonado-red-700 p-2 rounded-lg">
                   <ClipboardList className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="font-display text-xl">MI LISTA</h2>
+                  <h2 className="font-display text-lg sm:text-xl">MI LISTA</h2>
                   <p className="text-xs text-white/60 font-mono">{itemsCount} {itemsCount === 1 ? 'producto' : 'productos'}</p>
                 </div>
               </div>

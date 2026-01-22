@@ -5,9 +5,9 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  ChevronRight, ShoppingCart, FileText, Star, 
+  ChevronRight, ShoppingCart, Star, 
   Package, Truck, Shield, ArrowLeft, Plus, Minus,
-  Check, AlertCircle, Share2, ChevronLeft, ZoomIn
+  Check, ChevronLeft, ZoomIn
 } from 'lucide-react'
 import api from '../lib/api'
 import { useLocalCartStore } from '../store/localCartStore'
@@ -66,12 +66,17 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
   }, [productId])
 
   const formatPrice = (price) => {
+    if (price === null || price === undefined || price === 0 || price === '0' || price === '0.00') {
+      return null
+    }
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
       currency: 'ARS',
       minimumFractionDigits: 0,
     }).format(price)
   }
+  
+  const hasPrice = product?.price && product.price !== 0 && product.price !== '0' && product.price !== '0.00'
 
   const handleAddToCart = () => {
     // Usar carrito local - NO requiere autenticación
@@ -103,95 +108,104 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
   }
 
   return (
-    <div className="min-h-screen bg-maldonado-cream pt-28">
-      {/* Breadcrumb */}
+    <div className="min-h-screen bg-maldonado-cream pt-20 sm:pt-28">
+      {/* Breadcrumb - simplificado en móvil */}
       <div className="bg-maldonado-dark">
-        <div className="container-custom py-4">
-          <nav className="flex items-center gap-2 text-sm text-white/70 flex-wrap">
+        <div className="container-custom py-3 sm:py-4 px-4">
+          <nav className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-white/70 flex-wrap">
             <Link to="/" className="hover:text-white transition-colors">Inicio</Link>
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
             <Link to="/catalogo" className="hover:text-white transition-colors">Catálogo</Link>
             {product.category && (
               <>
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 hidden sm:block" />
                 <Link 
                   to={`/catalogo/${product.category.slug}`} 
-                  className="hover:text-white transition-colors"
+                  className="hover:text-white transition-colors hidden sm:block"
                 >
                   {product.category.name}
                 </Link>
               </>
             )}
-            <ChevronRight className="w-4 h-4" />
-            <span className="text-maldonado-red truncate max-w-[200px]">{product.name}</span>
+            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="text-maldonado-red truncate max-w-[120px] sm:max-w-[200px]">{product.name}</span>
           </nav>
         </div>
       </div>
 
       {/* Back Button */}
-      <div className="container-custom py-4">
+      <div className="container-custom py-3 sm:py-4 px-4">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-maldonado-dark hover:text-maldonado-red transition-colors"
         >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="font-heading">VOLVER</span>
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="font-heading text-sm sm:text-base">VOLVER</span>
         </button>
       </div>
 
       {/* Product Content */}
-      <div className="container-custom pb-16">
-        <div className="bg-white border-4 border-maldonado-dark shadow-solid-dark">
+      <div className="container-custom pb-8 sm:pb-16 px-0 sm:px-6">
+        <div className="bg-white sm:border-4 border-maldonado-dark sm:shadow-solid-dark">
           <div className="grid lg:grid-cols-2">
             {/* Image Gallery */}
             <div className="relative">
               {/* Imagen Principal */}
               <div className="relative aspect-square bg-maldonado-light-gray overflow-hidden">
                 {currentImage ? (
-                  <motion.img
-                    key={selectedImageIndex}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    src={currentImage}
-                    alt={product.name}
-                    className="w-full h-full object-contain cursor-zoom-in"
-                    onClick={() => setShowZoom(true)}
-                  />
+                  <>
+                    <motion.img
+                      key={selectedImageIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                      src={currentImage}
+                      alt={product.name}
+                      className="w-full h-full object-contain cursor-zoom-in"
+                      onClick={() => setShowZoom(true)}
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                        e.target.nextSibling?.classList?.remove('hidden')
+                      }}
+                    />
+                    <div className="hidden w-full h-full flex items-center justify-center">
+                      <Package className="w-20 h-20 sm:w-32 sm:h-32 text-maldonado-chrome" />
+                    </div>
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Package className="w-32 h-32 text-maldonado-chrome" />
+                    <Package className="w-20 h-20 sm:w-32 sm:h-32 text-maldonado-chrome" />
                   </div>
                 )}
                 
                 {/* Badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                <div className="absolute top-2 sm:top-4 left-2 sm:left-4 flex flex-col gap-1 sm:gap-2 z-10">
                   {product.is_new && (
-                    <span className="bg-maldonado-red text-white font-bold px-3 py-1 text-sm">
+                    <span className="bg-maldonado-red text-white font-bold px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm">
                       NUEVO
                     </span>
                   )}
                   {product.discount_percent && (
-                    <span className="bg-maldonado-dark text-white font-bold px-3 py-1 text-sm">
+                    <span className="bg-maldonado-dark text-white font-bold px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm">
                       -{product.discount_percent}% OFF
                     </span>
                   )}
                   {!product.in_stock && (
-                    <span className="bg-gray-500 text-white font-bold px-3 py-1 text-sm">
+                    <span className="bg-gray-500 text-white font-bold px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm">
                       SIN STOCK
                     </span>
                   )}
                 </div>
 
-                {/* Zoom indicator */}
+                {/* Zoom indicator - oculto en móvil pequeño */}
                 {currentImage && (
                   <button
                     onClick={() => setShowZoom(true)}
-                    className="absolute bottom-4 right-4 p-2 bg-white/80 backdrop-blur-sm 
+                    className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 p-1.5 sm:p-2 bg-white/80 backdrop-blur-sm 
                              border-2 border-maldonado-dark hover:bg-white transition-colors"
                     title="Ampliar imagen"
                   >
-                    <ZoomIn className="w-5 h-5" />
+                    <ZoomIn className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 )}
 
@@ -202,32 +216,32 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                       onClick={() => setSelectedImageIndex(prev => 
                         prev === 0 ? images.length - 1 : prev - 1
                       )}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 backdrop-blur-sm 
+                      className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-white/80 backdrop-blur-sm 
                                border-2 border-maldonado-dark hover:bg-white transition-colors"
                     >
-                      <ChevronLeft className="w-5 h-5" />
+                      <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
                     <button
                       onClick={() => setSelectedImageIndex(prev => 
                         prev === images.length - 1 ? 0 : prev + 1
                       )}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 backdrop-blur-sm 
+                      className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-white/80 backdrop-blur-sm 
                                border-2 border-maldonado-dark hover:bg-white transition-colors"
                     >
-                      <ChevronRight className="w-5 h-5" />
+                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
                   </>
                 )}
               </div>
 
-              {/* Thumbnails */}
+              {/* Thumbnails - scrollable en móvil */}
               {images.length > 1 && (
-                <div className="flex gap-2 p-4 overflow-x-auto bg-maldonado-cream">
+                <div className="flex gap-2 p-3 sm:p-4 overflow-x-auto bg-maldonado-cream scrollbar-hide">
                   {images.map((img, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImageIndex(index)}
-                      className={`flex-shrink-0 w-16 h-16 border-2 overflow-hidden transition-all ${
+                      className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 border-2 overflow-hidden transition-all rounded ${
                         selectedImageIndex === index 
                           ? 'border-maldonado-red ring-2 ring-maldonado-red' 
                           : 'border-maldonado-light-gray hover:border-maldonado-dark'
@@ -245,28 +259,28 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
             </div>
 
             {/* Info */}
-            <div className="p-6 lg:p-8 flex flex-col">
+            <div className="p-4 sm:p-6 lg:p-8 flex flex-col">
               {/* Brand & Code */}
               <div className="flex items-center justify-between mb-2">
-                <span className="font-heading text-maldonado-chrome">{product.brand}</span>
-                <span className="font-mono text-sm text-maldonado-chrome bg-maldonado-light-gray px-2 py-1">
+                <span className="font-heading text-maldonado-chrome text-sm sm:text-base">{product.brand}</span>
+                <span className="font-mono text-xs sm:text-sm text-maldonado-chrome bg-maldonado-light-gray px-2 py-1 rounded">
                   {product.code}
                 </span>
               </div>
 
               {/* Name */}
-              <h1 className="font-display text-3xl lg:text-4xl text-maldonado-dark mb-4">
+              <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl text-maldonado-dark mb-3 sm:mb-4 leading-tight">
                 {product.name}
               </h1>
 
               {/* Rating */}
               {product.rating > 0 && (
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-3 sm:mb-4 flex-wrap">
                   <div className="flex">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
-                        className={`w-5 h-5 ${
+                        className={`w-4 h-4 sm:w-5 sm:h-5 ${
                           star <= Math.round(product.rating)
                             ? 'fill-yellow-400 text-yellow-400'
                             : 'text-gray-300'
@@ -274,8 +288,8 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                       />
                     ))}
                   </div>
-                  <span className="font-bold">{product.rating}</span>
-                  <span className="text-maldonado-chrome">
+                  <span className="font-bold text-sm sm:text-base">{product.rating}</span>
+                  <span className="text-maldonado-chrome text-xs sm:text-sm">
                     ({product.reviews_count} opiniones)
                   </span>
                 </div>
@@ -285,7 +299,7 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
               {product.category && (
                 <Link
                   to={`/catalogo/${product.category.slug}`}
-                  className="inline-block mb-4 text-sm font-heading text-maldonado-red 
+                  className="inline-block mb-3 sm:mb-4 text-xs sm:text-sm font-heading text-maldonado-red 
                            hover:underline"
                 >
                   Ver más en {product.category.name}
@@ -293,69 +307,71 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
               )}
 
               {/* Description */}
-              <p className="text-maldonado-dark mb-6 leading-relaxed">
+              <p className="text-maldonado-dark mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
                 {product.description || 'Repuesto de alta calidad. Consulte por compatibilidad.'}
               </p>
 
               {/* Price */}
-              <div className="mb-6">
-                {product.original_price && (
-                  <p className="text-maldonado-chrome line-through text-lg">
-                    {formatPrice(product.original_price)}
-                  </p>
-                )}
-                <p className="font-display text-4xl text-maldonado-red">
-                  {formatPrice(product.price)}
-                </p>
-                <p className="text-sm text-maldonado-chrome mt-1">
-                  IVA incluido
-                </p>
-              </div>
-
-              {/* Stock Status */}
-              <div className="flex items-center gap-2 mb-6">
-                {product.in_stock ? (
+              <div className="mb-4 sm:mb-6">
+                {hasPrice ? (
                   <>
-                    <Check className="w-5 h-5 text-green-500" />
-                    <span className="text-green-600 font-heading">
-                      EN STOCK ({product.stock} disponibles)
-                    </span>
+                    {product.original_price && (
+                      <p className="text-maldonado-chrome line-through text-base sm:text-lg">
+                        {formatPrice(product.original_price)}
+                      </p>
+                    )}
+                    <p className="font-display text-3xl sm:text-4xl text-maldonado-red">
+                      {formatPrice(product.price)}
+                    </p>
+                    <p className="text-xs sm:text-sm text-maldonado-chrome mt-1">
+                      IVA incluido
+                    </p>
                   </>
                 ) : (
-                  <>
-                    <AlertCircle className="w-5 h-5 text-orange-500" />
-                    <span className="text-orange-600 font-heading">
-                      SIN STOCK - Consultar disponibilidad
-                    </span>
-                  </>
+                  <div className="bg-gradient-to-r from-maldonado-red/10 to-maldonado-red/5 
+                                rounded-xl p-3 sm:p-4 border border-maldonado-red/20">
+                    <p className="font-display text-xl sm:text-2xl text-maldonado-red mb-1">
+                      💬 CONSULTAR PRECIO
+                    </p>
+                    <p className="text-xs sm:text-sm text-maldonado-chrome">
+                      Contactanos por WhatsApp para cotización
+                    </p>
+                  </div>
                 )}
+              </div>
+
+              {/* Stock Status - simplificado */}
+              <div className="flex items-center gap-2 mb-4 sm:mb-6">
+                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
+                <span className="text-green-600 font-heading text-sm sm:text-base">
+                  EN STOCK
+                </span>
               </div>
 
               {/* Quantity & Add to Cart */}
-              {product.in_stock && (
-                <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                  {/* Quantity */}
-                  <div className="flex items-center border-2 border-maldonado-dark">
-                    <button
-                      onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                      className="p-3 hover:bg-maldonado-light-gray transition-colors"
-                    >
-                      <Minus className="w-5 h-5" />
-                    </button>
-                    <span className="px-6 font-mono text-lg">{quantity}</span>
-                    <button
-                      onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                      className="p-3 hover:bg-maldonado-light-gray transition-colors"
-                    >
-                      <Plus className="w-5 h-5" />
-                    </button>
-                  </div>
+              <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
+                {/* Quantity */}
+                <div className="flex items-center justify-center border-2 border-maldonado-dark rounded-lg">
+                  <button
+                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                    className="p-2.5 sm:p-3 hover:bg-maldonado-light-gray transition-colors"
+                  >
+                    <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                  <span className="px-4 sm:px-6 font-mono text-base sm:text-lg">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(q => Math.min(99, q + 1))}
+                    className="p-2.5 sm:p-3 hover:bg-maldonado-light-gray transition-colors"
+                  >
+                    <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                </div>
 
                   {/* Add to Cart Button */}
                   <button
                     onClick={handleAddToCart}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-6 
-                              font-display text-xl transition-all
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 sm:px-6 
+                              font-display text-base sm:text-xl transition-all rounded-lg
                               ${addedToCart 
                                 ? 'bg-green-500 text-white' 
                                 : 'bg-maldonado-red text-white hover:bg-maldonado-red-700'
@@ -363,44 +379,32 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                   >
                     {addedToCart ? (
                       <>
-                        <Check className="w-6 h-6" />
-                        AGREGADO!
+                        <Check className="w-5 h-5 sm:w-6 sm:h-6" />
+                        <span className="text-sm sm:text-xl">¡AGREGADO!</span>
                       </>
                     ) : (
                       <>
-                        <ShoppingCart className="w-6 h-6" />
-                        AGREGAR A MI LISTA
+                        <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />
+                        <span className="text-sm sm:text-xl">AGREGAR</span>
                       </>
                     )}
                   </button>
-                </div>
-              )}
-
-              {/* Quote Button */}
-              <button
-                onClick={() => onQuoteRequest?.(product)}
-                className="w-full flex items-center justify-center gap-2 py-3 px-6 
-                         border-2 border-maldonado-dark text-maldonado-dark font-display text-xl
-                         hover:bg-maldonado-dark hover:text-white transition-colors"
-              >
-                <FileText className="w-6 h-6" />
-                SOLICITAR COTIZACIÓN
-              </button>
+              </div>
 
               {/* Benefits */}
-              <div className="mt-auto pt-6 border-t border-maldonado-light-gray">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Truck className="w-5 h-5 text-maldonado-red" />
-                    <span>Envío a todo el país</span>
+              <div className="mt-auto pt-4 sm:pt-6 border-t border-maldonado-light-gray">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
+                  <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2 text-center sm:text-left">
+                    <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-maldonado-red" />
+                    <span className="leading-tight">Envío a todo el país</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-maldonado-red" />
-                    <span>Garantía oficial</span>
+                  <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2 text-center sm:text-left">
+                    <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-maldonado-red" />
+                    <span className="leading-tight">Garantía oficial</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Package className="w-5 h-5 text-maldonado-red" />
-                    <span>Repuesto original</span>
+                  <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1 sm:gap-2 text-center sm:text-left">
+                    <Package className="w-4 h-4 sm:w-5 sm:h-5 text-maldonado-red" />
+                    <span className="leading-tight">Repuesto original</span>
                   </div>
                 </div>
               </div>

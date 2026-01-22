@@ -20,10 +20,10 @@ export default function WhatsAppButton() {
   const [hasInteracted, setHasInteracted] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   
-  // Número de WhatsApp del negocio (configurar)
-  const whatsappNumber = '5491112345678'
+  // Número de WhatsApp del negocio - Maipú, Mendoza
+  const whatsappNumber = '5492614544128'
   const defaultMessage = encodeURIComponent(
-    '¡Hola! 👋 Me comunico desde la web de Maldonado Repuestos.\n\n¿Podrían asesorarme sobre repuestos?'
+    '¡Hola! 👋 Me comunico desde la web de Maldonado Repuestos.\n\n¿Podrían asesorarme sobre repuestos para semirremolques?'
   )
   
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${defaultMessage}`

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
   CircleDot, Disc, Lightbulb, Waves, Settings, Shield,
-  ChevronRight, Loader2, Package, Cog, Zap
+  ChevronRight, Loader2, Package, Cog, Zap, Wrench
 } from 'lucide-react'
 import api from '../lib/api'
 
@@ -20,6 +20,7 @@ const iconMap = {
   'Shield': Shield,
   'Cog': Cog,
   'Zap': Zap,
+  'Wrench': Wrench,
 }
 
 // Colores de fondo para cada categoría
@@ -78,13 +79,11 @@ export default function Categories() {
           </div>
         ) : (
           <>
-            {/* Bento Grid de Categorías */}
+            {/* Grid de Categorías - Todas del mismo tamaño */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {categories.map((category, index) => {
                 const IconComponent = iconMap[category.icon] || Settings
                 const colors = categoryColors[index % categoryColors.length]
-                // Primera categoría ocupa 2 columnas en desktop
-                const isLarge = index === 0
                 
                 return (
                   <motion.div
@@ -93,11 +92,10 @@ export default function Categories() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.05 }}
-                    className={isLarge ? 'col-span-2 row-span-2' : ''}
                   >
                     <Link
                       to={`/catalogo/${category.slug}`}
-                      className={`group relative block h-full min-h-[140px] ${isLarge ? 'min-h-[300px]' : 'md:min-h-[160px]'}
+                      className={`group relative block h-full min-h-[160px] md:min-h-[180px]
                                 rounded-2xl overflow-hidden transition-all duration-300
                                 hover:scale-[1.02] hover:shadow-xl ${colors.bg}`}
                     >
@@ -109,13 +107,13 @@ export default function Categories() {
                            }} />
                       
                       {/* Content */}
-                      <div className="relative h-full p-5 md:p-6 flex flex-col justify-between">
+                      <div className="relative h-full p-4 md:p-5 flex flex-col justify-between">
                         {/* Top: Icon + Badge */}
                         <div className="flex items-start justify-between">
-                          <div className={`${colors.iconBg} p-3 rounded-xl backdrop-blur-sm`}>
-                            <IconComponent className={`w-6 h-6 ${isLarge ? 'md:w-8 md:h-8' : ''} ${colors.text}`} />
+                          <div className={`${colors.iconBg} p-2.5 md:p-3 rounded-xl backdrop-blur-sm`}>
+                            <IconComponent className={`w-5 h-5 md:w-6 md:h-6 ${colors.text}`} />
                           </div>
-                          <span className={`font-mono text-xs ${colors.text} opacity-70 
+                          <span className={`font-mono text-[10px] md:text-xs ${colors.text} opacity-70 
                                          bg-black/20 px-2 py-1 rounded-full`}>
                             {category.products_count}
                           </span>
@@ -123,18 +121,13 @@ export default function Categories() {
                         
                         {/* Bottom: Name + Arrow */}
                         <div className="mt-auto">
-                          <h3 className={`font-display ${isLarge ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'} 
+                          <h3 className={`font-display text-base md:text-lg lg:text-xl 
                                        ${colors.text} leading-tight`}>
                             {category.name.toUpperCase()}
                           </h3>
-                          {isLarge && category.description && (
-                            <p className={`${colors.text} opacity-70 text-sm mt-2 line-clamp-2`}>
-                              {category.description}
-                            </p>
-                          )}
                           
-                          <div className="flex items-center gap-2 mt-3 group-hover:gap-3 transition-all">
-                            <span className={`text-sm ${colors.text} opacity-80`}>Ver productos</span>
+                          <div className="flex items-center gap-2 mt-2 md:mt-3 group-hover:gap-3 transition-all">
+                            <span className={`text-xs md:text-sm ${colors.text} opacity-80`}>Ver productos</span>
                             <ChevronRight className={`w-4 h-4 ${colors.text} opacity-80 
                                                     group-hover:translate-x-1 transition-transform`} />
                           </div>
