@@ -57,7 +57,7 @@ const brands = [
   { name: 'JOST', logo_url: '/brands/jost.png' },
   { name: 'MASTER', logo_url: '/brands/master.png' },
   { name: 'SUSPENSYS', logo_url: '/brands/suspensys.png' },
-  { name: 'CASTERTECH', logo_url: '/brands/castertech.png' },
+  { name: 'BOERO', logo_url: '/brands/boero.png' },
   { name: 'HYVA', logo_url: '/brands/hyva.png' },
   { name: 'FRASLE', logo_url: '/brands/frasle.png' },
   { name: 'SADAR', logo_url: '/brands/sadar.png' },

@@ -1365,7 +1365,7 @@ function BannerForm({ banner, onSave, onCancel }) {
 
   // Lista de marcas disponibles
   const availableBrands = [
-    'JOST', 'MASTER', 'SUSPENSYS', 'CASTERTECH', 'HYVA', 'FRASLE',
+    'JOST', 'MASTER', 'SUSPENSYS', 'BOERO', 'HYVA', 'FRASLE',
     'SADAR', 'NEUMACARG', 'FERVI', 'BAIML', 'KINEDYNE', 'FESTO'
   ]
 
