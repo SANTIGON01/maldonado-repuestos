@@ -46,17 +46,15 @@ function IntroSlide() {
           </h1>
         </motion.div>
 
-        {/* Description */}
-        <motion.p
+        {/* Subtitle */}
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="text-base sm:text-lg lg:text-xl text-white/60 max-w-lg font-body leading-relaxed"
+          className="font-heading text-xl sm:text-2xl lg:text-3xl text-white/90 tracking-wider uppercase"
         >
-          Encontrá los mejores repuestos para{' '}
-          <span className="text-white font-semibold">semirremolques y acoplados</span>.{' '}
-          Stock permanente, precios competitivos y asesoramiento experto.
-        </motion.p>
+          PARA TODAS LAS MARCAS
+        </motion.h2>
 
         {/* CTAs */}
         <motion.div
