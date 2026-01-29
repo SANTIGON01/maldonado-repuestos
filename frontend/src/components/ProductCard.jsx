@@ -88,15 +88,25 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
                         {formatPrice(product.original_price)}
                       </p>
                     )}
-                    <p className="text-xl font-display text-maldonado-red">
-                      {formatPrice(product.price)}
-                    </p>
+                    <div>
+                      <p className="text-xl font-display text-maldonado-red">
+                        {formatPrice(product.price)}
+                      </p>
+                      <p className="text-xs text-zinc-500 font-mono mt-0.5">
+                        + IVA
+                      </p>
+                    </div>
                   </>
                 ) : (
-                  <span className="inline-block bg-maldonado-red/10 text-maldonado-red 
-                                 font-heading text-sm px-3 py-1 rounded-full">
-                    CONSULTAR
-                  </span>
+                  <div className="text-right">
+                    <span className="inline-block bg-maldonado-red/10 text-maldonado-red
+                                   font-heading text-sm px-3 py-1 rounded-full">
+                      CONSULTAR
+                    </span>
+                    <p className="text-xs text-zinc-500 font-mono mt-1">
+                      + IVA
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
@@ -249,13 +259,21 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
                 <span className="text-sm sm:text-xl font-display text-maldonado-red">
                   {formatPrice(product.price)}
                 </span>
+                <span className="text-[10px] sm:text-xs text-zinc-500 font-mono mt-0.5">
+                  + IVA
+                </span>
               </div>
             ) : (
-              <span className="inline-block bg-gradient-to-r from-maldonado-red/10 to-maldonado-red/5 
-                             text-maldonado-red font-heading text-[10px] sm:text-sm px-2 sm:px-4 py-1 sm:py-1.5 rounded-full
-                             border border-maldonado-red/20">
-                💬 CONSULTAR
-              </span>
+              <div className="flex flex-col">
+                <span className="inline-block bg-gradient-to-r from-maldonado-red/10 to-maldonado-red/5
+                               text-maldonado-red font-heading text-[10px] sm:text-sm px-2 sm:px-4 py-1 sm:py-1.5 rounded-full
+                               border border-maldonado-red/20">
+                  💬 CONSULTAR
+                </span>
+                <span className="text-[10px] sm:text-xs text-zinc-500 font-mono mt-1">
+                  + IVA
+                </span>
+              </div>
             )}
           </div>
 
