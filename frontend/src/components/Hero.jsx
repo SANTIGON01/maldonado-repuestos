@@ -46,6 +46,21 @@ function IntroSlide() {
           </h1>
         </motion.div>
 
+        {/* Subtitle destacado - Todas las marcas */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="relative"
+        >
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-maldonado-red-700/20 to-transparent
+                        px-4 sm:px-6 py-2.5 sm:py-3 border-l-4 border-maldonado-red-500 backdrop-blur-sm">
+            <span className="font-heading text-sm sm:text-base lg:text-lg text-white/90 tracking-wide uppercase">
+              Repuestos para todas las marcas de semirremolque
+            </span>
+          </div>
+        </motion.div>
+
         {/* Description */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
