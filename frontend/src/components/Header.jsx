@@ -72,24 +72,24 @@ export default function Header({ onCartClick, onLoginClick }) {
         <div className="container-custom">
           <nav className="flex items-center justify-between py-4 gap-8">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
-              <motion.div 
+            <Link to="/" className="flex items-center gap-4 group">
+              <motion.div
                 whileHover={{ rotate: [0, -5, 5, 0] }}
                 transition={{ duration: 0.5 }}
                 className="relative"
               >
-                <img 
-                  src="/unnamed.jpg" 
+                <img
+                  src="/unnamed.jpg"
                   alt="Maldonado Repuestos"
-                  className="h-12 w-12 sm:h-14 sm:w-14 object-contain rounded-full border-2 border-maldonado-chrome
+                  className="h-16 w-16 sm:h-20 sm:w-20 object-contain rounded-full border-2 border-maldonado-chrome
                            group-hover:border-maldonado-red-700 transition-colors"
                 />
               </motion.div>
               <div>
-                <p className="font-display text-xl sm:text-2xl text-white leading-none tracking-wide">
+                <p className="font-display text-2xl sm:text-3xl text-white leading-none tracking-wide">
                   MALDONADO
                 </p>
-                <p className="font-heading text-xs sm:text-sm text-maldonado-red-500 tracking-[0.15em] sm:tracking-[0.2em]">
+                <p className="font-heading text-sm sm:text-base text-maldonado-red-500 tracking-[0.15em] sm:tracking-[0.2em]">
                   REPUESTOS
                 </p>
               </div>
