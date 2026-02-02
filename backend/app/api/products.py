@@ -140,11 +140,17 @@ async def search_products(
     q: str = Query(..., min_length=2),
     page: int = Query(1, ge=1),
     page_size: int = Query(12, ge=1, le=100),
+    category_id: int | None = None,
+    category_slug: str | None = None,
+    brand: str | None = None,
+    in_stock: bool | None = None,
+    sort_by: str = Query("name", enum=["created_at", "price", "name", "rating"]),
+    sort_order: str = Query("asc", enum=["asc", "desc"]),
     db: AsyncSession = Depends(get_db)
 ):
-    """Search products by name, code, or brand"""
+    """Search products by name, code, or brand with additional filters"""
     search_term = f"%{q}%"
-    
+
     query = (
         select(Product)
         .where(Product.is_active == True)
@@ -156,8 +162,35 @@ async def search_products(
                 Product.description.ilike(search_term),
             )
         )
-        .order_by(Product.name)
     )
+
+    # Category filter
+    if category_id:
+        query = query.where(Product.category_id == category_id)
+    elif category_slug:
+        cat_result = await db.execute(
+            select(Category.id).where(Category.slug == category_slug)
+        )
+        cat_id = cat_result.scalar_one_or_none()
+        if cat_id:
+            query = query.where(Product.category_id == cat_id)
+
+    # Brand filter
+    if brand:
+        query = query.where(Product.brand.ilike(f"%{brand}%"))
+
+    # Stock filter
+    if in_stock is True:
+        query = query.where(Product.stock > 0)
+    elif in_stock is False:
+        query = query.where(Product.stock == 0)
+
+    # Sorting
+    sort_column = getattr(Product, sort_by)
+    if sort_order == "desc":
+        query = query.order_by(sort_column.desc())
+    else:
+        query = query.order_by(sort_column.asc())
     
     # Get total count
     count_query = select(func.count()).select_from(query.subquery())

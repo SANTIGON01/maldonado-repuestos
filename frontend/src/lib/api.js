@@ -144,8 +144,21 @@ class ApiClient {
     return this.request(`/products?${searchParams}`)
   }
 
-  async searchProducts(query, page = 1, pageSize = 12) {
-    return this.request(`/products/search?q=${encodeURIComponent(query)}&page=${page}&page_size=${pageSize}`)
+  async searchProducts(query, page = 1, pageSize = 12, params = {}) {
+    const searchParams = new URLSearchParams({
+      q: query,
+      page,
+      page_size: pageSize
+    })
+
+    // Agregar parámetros adicionales de filtrado
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        searchParams.append(key, value)
+      }
+    })
+
+    return this.request(`/products/search?${searchParams}`)
   }
 
   async getProduct(id) {

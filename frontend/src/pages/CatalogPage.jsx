@@ -99,7 +99,16 @@ export default function CatalogPage({ onQuoteRequest }) {
 
         let data
         if (searchTerm.length >= 2) {
-          data = await api.searchProducts(searchTerm, page, 12)
+          // Pasar filtros también a la búsqueda
+          const searchParams = {
+            sort_by: sortField,
+            sort_order: sortOrder,
+          }
+          if (categorySlug) searchParams.category_slug = categorySlug
+          if (inStockOnly) searchParams.in_stock = true
+          if (selectedBrand) searchParams.brand = selectedBrand
+
+          data = await api.searchProducts(searchTerm, page, 12, searchParams)
         } else {
           data = await api.getProducts(params)
         }
@@ -116,6 +125,11 @@ export default function CatalogPage({ onQuoteRequest }) {
     
     fetchProducts()
   }, [categorySlug, page, sortBy, inStockOnly, selectedBrand, searchTerm])
+
+  // Reset page cuando cambian los filtros
+  useEffect(() => {
+    setPage(1)
+  }, [categorySlug, sortBy, inStockOnly, selectedBrand, searchTerm])
 
   // Scroll al inicio cuando cambia la página (importante para móviles)
   useEffect(() => {
