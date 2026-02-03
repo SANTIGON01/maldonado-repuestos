@@ -771,15 +771,15 @@ function ProductForm({ product, categories, onSave, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="bg-maldonado-dark text-white px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-        <h2 className="font-display text-xl sm:text-2xl">{product ? 'EDITAR PRODUCTO' : 'NUEVO PRODUCTO'}</h2>
+      <div className="bg-maldonado-dark text-white px-6 py-4 flex items-center justify-between">
+        <h2 className="font-display text-2xl">{product ? 'EDITAR PRODUCTO' : 'NUEVO PRODUCTO'}</h2>
         <button type="button" onClick={onCancel} className="hover:opacity-70">
           <X className="w-6 h-6" />
         </button>
       </div>
 
-      <div className="p-4 sm:p-6 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="p-6 space-y-4">
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-heading text-sm mb-1">CÓDIGO *</label>
             <input
@@ -830,7 +830,7 @@ function ProductForm({ product, categories, onSave, onCancel }) {
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="block font-heading text-sm mb-1">
               PRECIO
@@ -1055,17 +1055,17 @@ function ProductForm({ product, categories, onSave, onCancel }) {
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 py-4 bg-maldonado-light-gray flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+      <div className="px-6 py-4 bg-maldonado-light-gray flex justify-end gap-4">
         <button
           type="button"
           onClick={onCancel}
-          className="w-full sm:w-auto px-6 py-2 border-2 border-maldonado-dark bg-white hover:bg-maldonado-dark hover:text-white transition-colors font-heading"
+          className="px-6 py-2 border-2 border-maldonado-dark bg-white hover:bg-maldonado-dark hover:text-white transition-colors font-heading"
         >
           CANCELAR
         </button>
         <button
           type="submit"
-          className="w-full sm:w-auto px-6 py-2 bg-maldonado-red text-white hover:bg-maldonado-red-700 transition-colors font-heading flex items-center justify-center gap-2"
+          className="px-6 py-2 bg-maldonado-red text-white hover:bg-maldonado-red-700 transition-colors font-heading flex items-center gap-2"
         >
           <Save className="w-4 h-4" /> GUARDAR
         </button>
@@ -1118,8 +1118,8 @@ function CategoryForm({ category, onSave, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="bg-maldonado-dark text-white px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-        <h2 className="font-display text-xl sm:text-2xl">
+      <div className="bg-maldonado-dark text-white px-6 py-4 flex items-center justify-between">
+        <h2 className="font-display text-2xl">
           {category ? 'EDITAR CATEGORÍA' : 'NUEVA CATEGORÍA'}
         </h2>
         <button type="button" onClick={onCancel} className="hover:opacity-70">
@@ -1127,7 +1127,7 @@ function CategoryForm({ category, onSave, onCancel }) {
         </button>
       </div>
 
-      <div className="p-4 sm:p-6 space-y-4">
+      <div className="p-6 space-y-4">
         <div>
           <label className="block font-heading text-sm mb-1">NOMBRE *</label>
           <input
@@ -1198,17 +1198,17 @@ function CategoryForm({ category, onSave, onCancel }) {
         </label>
       </div>
 
-      <div className="px-4 sm:px-6 py-4 bg-maldonado-light-gray flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+      <div className="px-6 py-4 bg-maldonado-light-gray flex justify-end gap-4">
         <button
           type="button"
           onClick={onCancel}
-          className="w-full sm:w-auto px-6 py-2 border-2 border-maldonado-dark bg-white hover:bg-maldonado-dark hover:text-white transition-colors font-heading"
+          className="px-6 py-2 border-2 border-maldonado-dark bg-white hover:bg-maldonado-dark hover:text-white transition-colors font-heading"
         >
           CANCELAR
         </button>
         <button
           type="submit"
-          className="w-full sm:w-auto px-6 py-2 bg-maldonado-red text-white hover:bg-maldonado-red-700 transition-colors font-heading flex items-center justify-center gap-2"
+          className="px-6 py-2 bg-maldonado-red text-white hover:bg-maldonado-red-700 transition-colors font-heading flex items-center gap-2"
         >
           <Save className="w-4 h-4" /> GUARDAR
         </button>
@@ -1409,8 +1409,8 @@ function BannerForm({ banner, onSave, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="bg-maldonado-dark text-white px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-        <h2 className="font-display text-xl sm:text-2xl">
+      <div className="bg-maldonado-dark text-white px-6 py-4 flex items-center justify-between">
+        <h2 className="font-display text-2xl">
           {banner ? 'EDITAR PROMO/BANNER' : 'NUEVA PROMO/BANNER'}
         </h2>
         <button type="button" onClick={onCancel} className="hover:opacity-70">
@@ -1418,7 +1418,7 @@ function BannerForm({ banner, onSave, onCancel }) {
         </button>
       </div>
 
-      <div className="p-4 sm:p-6 space-y-4">
+      <div className="p-6 space-y-4">
         <div>
           <label className="block font-heading text-sm mb-1">TÍTULO PRINCIPAL *</label>
           <input
@@ -1474,7 +1474,7 @@ function BannerForm({ banner, onSave, onCancel }) {
             </div>
           )}
 
-          {/* Subir imagen desde archivo */}
+          {/* Subir imagen desde archivo (PC/Móvil/Cámara) */}
           <div className="border-2 border-dashed border-maldonado-dark p-4 rounded-lg bg-zinc-50">
             <div className="flex flex-col sm:flex-row gap-3 items-center">
               <input
@@ -1484,6 +1484,7 @@ function BannerForm({ banner, onSave, onCancel }) {
                 onChange={handleFileUpload}
                 className="hidden"
                 id="banner-file-upload"
+                capture="environment"
               />
               <label
                 htmlFor="banner-file-upload"
@@ -1499,12 +1500,12 @@ function BannerForm({ banner, onSave, onCancel }) {
                 ) : (
                   <>
                     <Upload className="w-5 h-5" />
-                    SUBIR IMAGEN
+                    📱 SUBIR FOTO
                   </>
                 )}
               </label>
               <span className="text-sm text-maldonado-chrome text-center sm:text-left">
-                PNG, JPG, GIF o WebP (máx. 5MB)
+                Desde tu celular, PC o cámara (máx. 5MB)
               </span>
             </div>
             {uploadError && (
@@ -1526,7 +1527,7 @@ function BannerForm({ banner, onSave, onCancel }) {
           </div>
 
           <p className="text-xs text-maldonado-chrome">
-            Podés subir una imagen desde tu dispositivo o pegar la URL de una imagen existente.
+            💡 Recomendado: Usar el botón "SUBIR FOTO" para subir desde tu celular. Es más rápido y funciona con la cámara.
           </p>
         </div>
 
@@ -1549,7 +1550,7 @@ function BannerForm({ banner, onSave, onCancel }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-heading text-sm mb-1">TEXTO DEL BOTÓN</label>
             <input
@@ -1574,7 +1575,7 @@ function BannerForm({ banner, onSave, onCancel }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-heading text-sm mb-2">TIPO DE BANNER</label>
             <div className="grid grid-cols-2 gap-2">
@@ -1615,7 +1616,7 @@ function BannerForm({ banner, onSave, onCancel }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-heading text-sm mb-1">ORDEN (menor = primero)</label>
             <input
@@ -1636,23 +1637,23 @@ function BannerForm({ banner, onSave, onCancel }) {
                 onChange={handleChange}
                 className="w-5 h-5 accent-maldonado-red"
               />
-              <span className="font-heading text-sm sm:text-base">Banner Activo (visible en el slider)</span>
+              <span className="font-heading">Banner Activo (visible en el slider)</span>
             </label>
           </div>
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 py-4 bg-maldonado-light-gray flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+      <div className="px-6 py-4 bg-maldonado-light-gray flex justify-end gap-4">
         <button
           type="button"
           onClick={onCancel}
-          className="w-full sm:w-auto px-6 py-2 border-2 border-maldonado-dark bg-white hover:bg-maldonado-dark hover:text-white transition-colors font-heading"
+          className="px-6 py-2 border-2 border-maldonado-dark bg-white hover:bg-maldonado-dark hover:text-white transition-colors font-heading"
         >
           CANCELAR
         </button>
         <button
           type="submit"
-          className="w-full sm:w-auto px-6 py-2 bg-maldonado-red text-white hover:bg-maldonado-red-700 transition-colors font-heading flex items-center justify-center gap-2"
+          className="px-6 py-2 bg-maldonado-red text-white hover:bg-maldonado-red-700 transition-colors font-heading flex items-center gap-2"
         >
           <Save className="w-4 h-4" /> GUARDAR
         </button>
