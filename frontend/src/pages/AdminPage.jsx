@@ -1366,8 +1366,16 @@ function BannerForm({ banner, onSave, onCancel }) {
     setUploadError('')
 
     try {
-      const uploadedUrl = await api.uploadImage(file)
-      setFormData((prev) => ({ ...prev, image_url: uploadedUrl }))
+      const result = await api.uploadImage(file)
+
+      // Si es Cloudinary, la URL ya es completa. Si es local, construir la URL
+      let fullImageUrl = result.image_url
+      if (result.storage === 'local') {
+        const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:8000'
+        fullImageUrl = `${backendUrl}${result.image_url}`
+      }
+
+      setFormData((prev) => ({ ...prev, image_url: fullImageUrl }))
     } catch (error) {
       console.error('Error uploading image:', error)
       setUploadError(error.message || 'Error al subir la imagen')
