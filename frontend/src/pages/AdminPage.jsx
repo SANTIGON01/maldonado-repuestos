@@ -1334,12 +1334,50 @@ function BannerForm({ banner, onSave, onCancel }) {
     is_active: banner?.is_active ?? true,
   })
 
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const fileInputRef = useRef(null)
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }))
+  }
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validar tamaño (5MB máximo)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('La imagen no debe superar los 5MB')
+      return
+    }
+
+    // Validar tipo
+    if (!file.type.startsWith('image/')) {
+      setUploadError('El archivo debe ser una imagen')
+      return
+    }
+
+    setIsUploading(true)
+    setUploadError('')
+
+    try {
+      const uploadedUrl = await api.uploadImage(file)
+      setFormData((prev) => ({ ...prev, image_url: uploadedUrl }))
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      setUploadError(error.message || 'Error al subir la imagen')
+    } finally {
+      setIsUploading(false)
+      // Limpiar el input para permitir subir el mismo archivo de nuevo
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
   }
 
   const handleSubmit = (e) => {
@@ -1419,35 +1457,78 @@ function BannerForm({ banner, onSave, onCancel }) {
         </div>
 
         {/* Campo de imagen */}
-        <div>
-          <label className="block font-heading text-sm mb-1">IMAGEN DEL PRODUCTO/PROMO</label>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <input
-                type="url"
-                name="image_url"
-                value={formData.image_url}
-                onChange={handleChange}
-                className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
-                placeholder="https://ejemplo.com/imagen-producto.jpg"
+        <div className="space-y-3">
+          <label className="block font-heading text-sm">IMAGEN DEL PRODUCTO/PROMO *</label>
+
+          {/* Preview de la imagen actual */}
+          {formData.image_url && (
+            <div className="border-2 border-maldonado-dark bg-maldonado-light-gray p-4">
+              <img
+                src={formData.image_url}
+                alt="Preview"
+                className="w-full max-h-48 object-contain"
+                onError={(e) => {
+                  e.target.style.display = 'none'
+                }}
               />
-              <p className="text-xs text-maldonado-chrome mt-1">
-                URL de la imagen del producto o promoción que se mostrará en el slider
-              </p>
             </div>
-            {formData.image_url && (
-              <div className="w-24 h-24 border-2 border-maldonado-dark bg-maldonado-light-gray overflow-hidden flex-shrink-0">
-                <img 
-                  src={formData.image_url} 
-                  alt="Preview" 
-                  className="w-full h-full object-contain"
-                  onError={(e) => {
-                    e.target.style.display = 'none'
-                  }}
-                />
-              </div>
+          )}
+
+          {/* Subir imagen desde archivo (PC/Móvil/Cámara) */}
+          <div className="border-2 border-dashed border-maldonado-dark p-4 rounded-lg bg-zinc-50">
+            <div className="flex flex-col sm:flex-row gap-3 items-center">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="banner-file-upload"
+                capture="environment"
+              />
+              <label
+                htmlFor="banner-file-upload"
+                className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 bg-maldonado-red text-white font-heading
+                         cursor-pointer hover:bg-red-700 transition-colors rounded-lg sm:rounded-none
+                         ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    SUBIENDO...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-5 h-5" />
+                    📱 SUBIR FOTO
+                  </>
+                )}
+              </label>
+              <span className="text-sm text-maldonado-chrome text-center sm:text-left">
+                Desde tu celular, PC o cámara (máx. 5MB)
+              </span>
+            </div>
+            {uploadError && (
+              <p className="text-red-500 text-sm mt-2 font-bold">⚠️ {uploadError}</p>
             )}
           </div>
+
+          {/* Campo URL alternativo */}
+          <div className="flex gap-2 items-center">
+            <span className="text-sm font-heading text-maldonado-chrome whitespace-nowrap">O pegar URL:</span>
+            <input
+              type="url"
+              name="image_url"
+              value={formData.image_url}
+              onChange={handleChange}
+              className="flex-1 border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
+              placeholder="https://ejemplo.com/imagen.jpg"
+            />
+          </div>
+
+          <p className="text-xs text-maldonado-chrome">
+            💡 Recomendado: Usar el botón "SUBIR FOTO" para subir desde tu celular. Es más rápido y funciona con la cámara.
+          </p>
         </div>
 
         {/* Selector de marca */}
