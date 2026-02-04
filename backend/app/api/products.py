@@ -45,7 +45,7 @@ def product_to_response(p: Product) -> ProductResponse:
 async def list_products(
     response: Response,
     page: int = Query(1, ge=1),
-    page_size: int = Query(12, ge=1, le=100),
+    page_size: int = Query(12, ge=1, le=1000),
     category_id: int | None = None,
     category_slug: str | None = None,
     brand: str | None = None,
@@ -139,7 +139,7 @@ async def list_products(
 async def search_products(
     q: str = Query(..., min_length=2),
     page: int = Query(1, ge=1),
-    page_size: int = Query(12, ge=1, le=100),
+    page_size: int = Query(12, ge=1, le=1000),
     category_id: int | None = None,
     category_slug: str | None = None,
     brand: str | None = None,
