@@ -72,7 +72,7 @@ export default function AdminPage() {
     setLoading(true)
     try {
       const [productsData, categoriesData, bannersData] = await Promise.all([
-        api.getProducts({ page_size: 100 }),
+        api.getProducts({ page_size: 1000 }),
         api.getCategories(false),
         api.getAllBanners().catch(() => []), // Puede fallar si no es admin
       ])
@@ -426,18 +426,18 @@ function ProductsTable({ products, categories, onEdit, onDelete }) {
   }
 
   return (
-    <div className="bg-white border-2 border-maldonado-dark overflow-hidden">
+    <div className="bg-white border-2 border-maldonado-dark overflow-x-auto">
       <table className="w-full">
         <thead className="bg-maldonado-dark text-white">
           <tr>
-            <th className="px-4 py-3 text-left font-heading">IMAGEN</th>
-            <th className="px-4 py-3 text-left font-heading">CÓDIGO</th>
-            <th className="px-4 py-3 text-left font-heading">NOMBRE</th>
-            <th className="px-4 py-3 text-left font-heading">CATEGORÍA</th>
-            <th className="px-4 py-3 text-right font-heading">PRECIO</th>
-            <th className="px-4 py-3 text-center font-heading">STOCK</th>
-            <th className="px-4 py-3 text-center font-heading">DESTACADO</th>
-            <th className="px-4 py-3 text-center font-heading">ACCIONES</th>
+            <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-heading">IMAGEN</th>
+            <th className="hidden sm:table-cell px-2 sm:px-4 py-2 sm:py-3 text-left font-heading">CÓDIGO</th>
+            <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-heading">NOMBRE</th>
+            <th className="hidden md:table-cell px-2 sm:px-4 py-2 sm:py-3 text-left font-heading">CATEGORÍA</th>
+            <th className="px-2 sm:px-4 py-2 sm:py-3 text-right font-heading">PRECIO</th>
+            <th className="hidden md:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center font-heading">STOCK</th>
+            <th className="hidden lg:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center font-heading">DESTACADO</th>
+            <th className="px-2 sm:px-4 py-2 sm:py-3 text-center font-heading">ACCIONES</th>
           </tr>
         </thead>
         <tbody>
@@ -448,22 +448,22 @@ function ProductsTable({ products, categories, onEdit, onDelete }) {
                 index % 2 === 0 ? 'bg-white' : 'bg-maldonado-cream/30'
               }`}
             >
-              <td className="px-4 py-3">
+              <td className="px-2 sm:px-4 py-2 sm:py-3">
                 <img
                   src={product.image_url || '/placeholder-product.svg'}
                   alt={product.name}
-                  className="w-12 h-12 object-cover border border-maldonado-light-gray"
+                  className="w-10 h-10 sm:w-12 sm:h-12 object-cover border border-maldonado-light-gray"
                 />
               </td>
-              <td className="px-4 py-3 font-mono text-sm">{product.code}</td>
-              <td className="px-4 py-3 font-heading">{product.name}</td>
-              <td className="px-4 py-3 text-sm">
+              <td className="hidden sm:table-cell px-2 sm:px-4 py-2 sm:py-3 font-mono text-sm">{product.code}</td>
+              <td className="px-2 sm:px-4 py-2 sm:py-3 font-heading">{product.name}</td>
+              <td className="hidden md:table-cell px-2 sm:px-4 py-2 sm:py-3 text-sm">
                 {categories.find((c) => c.id === product.category_id)?.name || '-'}
               </td>
-              <td className="px-4 py-3 text-right font-mono text-maldonado-red font-bold">
+              <td className="px-2 sm:px-4 py-2 sm:py-3 text-right font-mono text-maldonado-red font-bold">
                 ${product.price?.toLocaleString('es-AR')}
               </td>
-              <td className="px-4 py-3 text-center">
+              <td className="hidden md:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center">
                 <span
                   className={`px-2 py-1 text-xs font-mono ${
                     product.stock > 10
@@ -476,25 +476,25 @@ function ProductsTable({ products, categories, onEdit, onDelete }) {
                   {product.stock}
                 </span>
               </td>
-              <td className="px-4 py-3 text-center">
+              <td className="hidden lg:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center">
                 {product.is_featured ? (
                   <span className="text-maldonado-red">★</span>
                 ) : (
                   <span className="text-maldonado-chrome">○</span>
                 )}
               </td>
-              <td className="px-4 py-3">
-                <div className="flex items-center justify-center gap-2">
+              <td className="px-2 sm:px-4 py-2 sm:py-3">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
                   <button
                     onClick={() => onEdit(product)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 transition-colors"
+                    className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 transition-colors"
                     title="Editar"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => onDelete(product.id)}
-                    className="p-2 text-red-600 hover:bg-red-50 transition-colors"
+                    className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 transition-colors"
                     title="Eliminar"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -522,16 +522,16 @@ function CategoriesTable({ categories, onEdit, onDelete }) {
   }
 
   return (
-    <div className="bg-white border-2 border-maldonado-dark overflow-hidden">
+    <div className="bg-white border-2 border-maldonado-dark overflow-x-auto">
       <table className="w-full">
         <thead className="bg-maldonado-dark text-white">
           <tr>
-            <th className="px-4 py-3 text-left font-heading">ICONO</th>
-            <th className="px-4 py-3 text-left font-heading">NOMBRE</th>
-            <th className="px-4 py-3 text-left font-heading">SLUG</th>
-            <th className="px-4 py-3 text-left font-heading">DESCRIPCIÓN</th>
-            <th className="px-4 py-3 text-center font-heading">ACTIVA</th>
-            <th className="px-4 py-3 text-center font-heading">ACCIONES</th>
+            <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-heading">ICONO</th>
+            <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-heading">NOMBRE</th>
+            <th className="hidden md:table-cell px-2 sm:px-4 py-2 sm:py-3 text-left font-heading">SLUG</th>
+            <th className="hidden lg:table-cell px-2 sm:px-4 py-2 sm:py-3 text-left font-heading">DESCRIPCIÓN</th>
+            <th className="hidden sm:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center font-heading">ACTIVA</th>
+            <th className="px-2 sm:px-4 py-2 sm:py-3 text-center font-heading">ACCIONES</th>
           </tr>
         </thead>
         <tbody>
@@ -542,31 +542,31 @@ function CategoriesTable({ categories, onEdit, onDelete }) {
                 index % 2 === 0 ? 'bg-white' : 'bg-maldonado-cream/30'
               }`}
             >
-              <td className="px-4 py-3">
+              <td className="px-2 sm:px-4 py-2 sm:py-3">
                 <span className="text-2xl">{category.icon || '📦'}</span>
               </td>
-              <td className="px-4 py-3 font-heading">{category.name}</td>
-              <td className="px-4 py-3 font-mono text-sm text-maldonado-chrome">{category.slug}</td>
-              <td className="px-4 py-3 text-sm truncate max-w-xs">{category.description || '-'}</td>
-              <td className="px-4 py-3 text-center">
+              <td className="px-2 sm:px-4 py-2 sm:py-3 font-heading">{category.name}</td>
+              <td className="hidden md:table-cell px-2 sm:px-4 py-2 sm:py-3 font-mono text-sm text-maldonado-chrome">{category.slug}</td>
+              <td className="hidden lg:table-cell px-2 sm:px-4 py-2 sm:py-3 text-sm truncate max-w-xs">{category.description || '-'}</td>
+              <td className="hidden sm:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center">
                 {category.is_active ? (
                   <span className="text-green-600">✓</span>
                 ) : (
                   <span className="text-red-600">✗</span>
                 )}
               </td>
-              <td className="px-4 py-3">
-                <div className="flex items-center justify-center gap-2">
+              <td className="px-2 sm:px-4 py-2 sm:py-3">
+                <div className="flex items-center justify-center gap-1 sm:gap-2">
                   <button
                     onClick={() => onEdit(category)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 transition-colors"
+                    className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 transition-colors"
                     title="Editar"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => onDelete(category.id)}
-                    className="p-2 text-red-600 hover:bg-red-50 transition-colors"
+                    className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 transition-colors"
                     title="Eliminar"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -1237,16 +1237,16 @@ function BannersTable({ banners, onEdit, onDelete }) {
   }
 
   return (
-    <div className="bg-white border-2 border-maldonado-dark overflow-hidden">
+    <div className="bg-white border-2 border-maldonado-dark overflow-x-auto">
       <table className="w-full">
         <thead className="bg-maldonado-dark text-white">
           <tr>
-            <th className="px-4 py-3 text-left font-heading">ORDEN</th>
-            <th className="px-4 py-3 text-left font-heading">IMAGEN</th>
-            <th className="px-4 py-3 text-left font-heading">TÍTULO</th>
-            <th className="px-4 py-3 text-center font-heading">TIPO</th>
-            <th className="px-4 py-3 text-center font-heading">ACTIVO</th>
-            <th className="px-4 py-3 text-center font-heading">ACCIONES</th>
+            <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-heading">IMAGEN</th>
+            <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-heading">TÍTULO</th>
+            <th className="hidden sm:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center font-heading">ORDEN</th>
+            <th className="hidden md:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center font-heading">TIPO</th>
+            <th className="hidden lg:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center font-heading">ACTIVO</th>
+            <th className="px-2 sm:px-4 py-2 sm:py-3 text-center font-heading">ACCIONES</th>
           </tr>
         </thead>
         <tbody>
@@ -1259,11 +1259,10 @@ function BannersTable({ banners, onEdit, onDelete }) {
                   index % 2 === 0 ? 'bg-white' : 'bg-maldonado-cream/30'
                 }`}
               >
-                <td className="px-4 py-3 font-mono text-center">{banner.order}</td>
-                <td className="px-4 py-3">
+                <td className="px-2 sm:px-4 py-2 sm:py-3">
                   {banner.image_url ? (
-                    <img 
-                      src={banner.image_url} 
+                    <img
+                      src={banner.image_url}
                       alt={banner.title}
                       className="w-16 h-16 object-contain border border-maldonado-light-gray bg-white"
                     />
@@ -1273,36 +1272,37 @@ function BannersTable({ banners, onEdit, onDelete }) {
                     </div>
                   )}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-2 sm:px-4 py-2 sm:py-3">
                   <span className="font-heading block">{banner.title}</span>
                   {banner.subtitle && (
                     <span className="text-sm text-maldonado-chrome">{banner.subtitle}</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-center">
+                <td className="hidden sm:table-cell px-2 sm:px-4 py-2 sm:py-3 font-mono text-center">{banner.order}</td>
+                <td className="hidden md:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center">
                   <span className={`px-2 py-1 text-xs font-mono ${typeInfo.color}`}>
                     {typeInfo.label}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-center">
+                <td className="hidden lg:table-cell px-2 sm:px-4 py-2 sm:py-3 text-center">
                   {banner.is_active ? (
                     <Eye className="w-5 h-5 text-green-600 mx-auto" />
                   ) : (
                     <EyeOff className="w-5 h-5 text-red-600 mx-auto" />
                   )}
                 </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center justify-center gap-2">
+                <td className="px-2 sm:px-4 py-2 sm:py-3">
+                  <div className="flex items-center justify-center gap-1 sm:gap-2">
                     <button
                       onClick={() => onEdit(banner)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 transition-colors"
+                      className="p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 transition-colors"
                       title="Editar"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onDelete(banner.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 transition-colors"
+                      className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 transition-colors"
                       title="Eliminar"
                     >
                       <Trash2 className="w-4 h-4" />
