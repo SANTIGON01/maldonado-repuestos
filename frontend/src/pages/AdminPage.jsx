@@ -72,7 +72,7 @@ export default function AdminPage() {
     setLoading(true)
     try {
       const [productsData, categoriesData, bannersData] = await Promise.all([
-        api.getProducts({ page_size: 100 }),
+        api.getProducts({ page_size: 1000 }),
         api.getCategories(false),
         api.getAllBanners().catch(() => []), // Puede fallar si no es admin
       ])
