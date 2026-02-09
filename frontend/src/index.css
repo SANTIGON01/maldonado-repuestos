@@ -141,39 +141,6 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-
-  /* Horizontal scroll fade effects */
-  .scroll-fade-x {
-    position: relative;
-  }
-
-  .scroll-fade-x::before,
-  .scroll-fade-x::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 40px;
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  .scroll-fade-x::before {
-    left: 0;
-    background: linear-gradient(to right, white, transparent);
-  }
-
-  .scroll-fade-x::after {
-    right: 0;
-    background: linear-gradient(to left, white, transparent);
-  }
-
-  @media (min-width: 640px) {
-    .scroll-fade-x::before,
-    .scroll-fade-x::after {
-      width: 60px;
-    }
-  }
 }
 
 /* Marquee animation - texto móvil infinito */
