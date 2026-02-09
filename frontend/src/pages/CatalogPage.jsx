@@ -209,23 +209,25 @@ export default function CatalogPage({ onQuoteRequest }) {
       {!categorySlug && categories.length > 0 && (
         <div className="bg-white border-b border-maldonado-light-gray">
           <div className="container-custom py-3 sm:py-4 px-4">
-            <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
-              <Link
-                to="/catalogo"
-                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-maldonado-dark text-white font-heading text-xs sm:text-sm flex-shrink-0 rounded-lg sm:rounded-none"
-              >
-                TODOS
-              </Link>
-              {categories.map(cat => (
+            <div className="scroll-fade-x">
+              <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
                 <Link
-                  key={cat.id}
-                  to={`/catalogo/${cat.slug}`}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-maldonado-dark text-maldonado-dark 
-                           font-heading text-xs sm:text-sm hover:bg-maldonado-dark hover:text-white transition-colors flex-shrink-0 whitespace-nowrap rounded-lg sm:rounded-none"
+                  to="/catalogo"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-maldonado-dark text-white font-heading text-xs sm:text-sm flex-shrink-0 rounded-lg sm:rounded-none"
                 >
-                  {cat.name.toUpperCase()} <span className="hidden sm:inline">({cat.products_count})</span>
+                  TODOS
                 </Link>
-              ))}
+                {categories.map(cat => (
+                  <Link
+                    key={cat.id}
+                    to={`/catalogo/${cat.slug}`}
+                    className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-maldonado-dark text-maldonado-dark
+                           font-heading text-xs sm:text-sm hover:bg-maldonado-dark hover:text-white transition-colors flex-shrink-0 whitespace-nowrap rounded-lg sm:rounded-none"
+                  >
+                    {cat.name.toUpperCase()} <span className="hidden sm:inline">({cat.products_count})</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
