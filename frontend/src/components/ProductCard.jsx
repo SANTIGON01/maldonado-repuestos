@@ -71,7 +71,14 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs text-zinc-400 font-mono">{product.code}</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="text-xs text-zinc-400 font-mono">{product.code}</p>
+                  {product.is_on_promotion && (
+                    <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      🔥 OFERTA
+                    </span>
+                  )}
+                </div>
                 <h3 className="font-heading text-base text-zinc-800 group-hover:text-maldonado-red transition-colors">
                   {product.name}
                 </h3>
@@ -187,6 +194,11 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
 
           {/* Badges */}
           <div className="absolute top-2 sm:top-3 left-2 sm:left-3 flex flex-col gap-1">
+            {product.is_on_promotion && (
+              <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] sm:text-xs font-bold px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-lg animate-pulse">
+                🔥 OFERTA
+              </span>
+            )}
             {product.is_new && (
               <span className="bg-maldonado-red text-white text-[10px] sm:text-xs font-bold px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full">
                 NUEVO
