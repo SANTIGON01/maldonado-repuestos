@@ -13,6 +13,7 @@ class BannerBase(BaseModel):
     brand: str | None = None  # Marca del producto (ej: JOST, SUSPENSYS)
     button_text: str | None = None
     button_link: str | None = None
+    product_codes: str | None = None
     banner_type: str = 'promo'
     bg_color: str | None = None
     order: int = 0
@@ -33,6 +34,7 @@ class BannerUpdate(BaseModel):
     brand: str | None = None
     button_text: str | None = None
     button_link: str | None = None
+    product_codes: str | None = None
     banner_type: str | None = None
     bg_color: str | None = None
     order: int | None = None

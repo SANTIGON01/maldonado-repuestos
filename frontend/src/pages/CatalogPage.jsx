@@ -39,16 +39,21 @@ export default function CatalogPage({ onQuoteRequest }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedBrand, setSelectedBrand] = useState('')
   const [inStockOnly, setInStockOnly] = useState(false)
+  const [showOnPromotion, setShowOnPromotion] = useState(false)
+  const [productCodes, setProductCodes] = useState('')
   
   // View mode
   const [viewMode, setViewMode] = useState('grid')
 
-  // Leer parámetro de búsqueda de la URL
+  // Leer parámetros de la URL
   useEffect(() => {
     const searchFromUrl = searchParams.get('search')
-    if (searchFromUrl) {
-      setSearchTerm(searchFromUrl)
-    }
+    const codesFromUrl = searchParams.get('codes')
+    const onPromotionFromUrl = searchParams.get('on_promotion')
+
+    if (searchFromUrl) setSearchTerm(searchFromUrl)
+    if (codesFromUrl) setProductCodes(codesFromUrl)
+    if (onPromotionFromUrl === 'true') setShowOnPromotion(true)
   }, [searchParams])
 
   // Fetch categories
@@ -97,6 +102,14 @@ export default function CatalogPage({ onQuoteRequest }) {
           params.brand = selectedBrand
         }
 
+        if (showOnPromotion) {
+          params.on_promotion = true
+        }
+
+        if (productCodes) {
+          params.codes = productCodes
+        }
+
         let data
         if (searchTerm.length >= 2) {
           // Pasar filtros también a la búsqueda
@@ -107,6 +120,8 @@ export default function CatalogPage({ onQuoteRequest }) {
           if (categorySlug) searchParams.category_slug = categorySlug
           if (inStockOnly) searchParams.in_stock = true
           if (selectedBrand) searchParams.brand = selectedBrand
+          if (showOnPromotion) searchParams.on_promotion = true
+          if (productCodes) searchParams.codes = productCodes
 
           data = await api.searchProducts(searchTerm, page, 12, searchParams)
         } else {
@@ -124,12 +139,12 @@ export default function CatalogPage({ onQuoteRequest }) {
     }
     
     fetchProducts()
-  }, [categorySlug, page, sortBy, inStockOnly, selectedBrand, searchTerm])
+  }, [categorySlug, page, sortBy, inStockOnly, selectedBrand, searchTerm, showOnPromotion, productCodes])
 
   // Reset page cuando cambian los filtros
   useEffect(() => {
     setPage(1)
-  }, [categorySlug, sortBy, inStockOnly, selectedBrand, searchTerm])
+  }, [categorySlug, sortBy, inStockOnly, selectedBrand, searchTerm, showOnPromotion, productCodes])
 
   // Scroll al inicio cuando cambia la página (importante para móviles)
   useEffect(() => {
@@ -333,12 +348,25 @@ export default function CatalogPage({ onQuoteRequest }) {
                   <span className="font-heading text-xs sm:text-sm">Solo en stock</span>
                 </label>
 
+                {/* Promotion Filter */}
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showOnPromotion}
+                    onChange={(e) => setShowOnPromotion(e.target.checked)}
+                    className="w-4 h-4 sm:w-5 sm:h-5 accent-maldonado-red"
+                  />
+                  <span className="font-heading text-xs sm:text-sm">Solo en promoción</span>
+                </label>
+
                 {/* Clear Filters */}
                 <button
                   onClick={() => {
                     setSelectedBrand('')
                     setInStockOnly(false)
                     setSearchTerm('')
+                    setShowOnPromotion(false)
+                    setProductCodes('')
                   }}
                   className="flex items-center gap-1 text-maldonado-red hover:underline font-heading text-xs sm:text-sm"
                 >

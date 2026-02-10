@@ -199,6 +199,23 @@ function IntroSlide() {
   )
 }
 
+// Helper para construir el link del banner con filtros
+const getBannerLink = (banner) => {
+  let link = banner.button_link || '/catalogo'
+
+  // Si tiene códigos, agregar parámetro codes
+  if (banner.product_codes && banner.product_codes.trim()) {
+    const codes = banner.product_codes.trim().replace(/\s+/g, ',')
+    const separator = link.includes('?') ? '&' : '?'
+    link += `${separator}codes=${encodeURIComponent(codes)}`
+  } else if (link === '/catalogo') {
+    // Sin códigos pero link al catálogo → mostrar productos en promoción
+    link += '?on_promotion=true'
+  }
+
+  return link
+}
+
 // Slide de promo/banner dinámico
 function PromoSlide({ banner }) {
   const iconMap = {
@@ -277,8 +294,8 @@ function PromoSlide({ banner }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <Link 
-              to={banner.button_link}
+            <Link
+              to={getBannerLink(banner)}
               className="btn-brutal group inline-flex text-center justify-center"
             >
               {banner.button_text}

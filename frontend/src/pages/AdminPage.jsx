@@ -629,6 +629,7 @@ function ProductForm({ product, categories, onSave, onCancel }) {
     image_url: product?.image_url || '',
     is_featured: product?.is_featured || false,
     is_active: product?.is_active ?? true,
+    is_on_promotion: product?.is_on_promotion || false,
   })
 
   const [images, setImages] = useState(initialImages)
@@ -1052,6 +1053,16 @@ function ProductForm({ product, categories, onSave, onCancel }) {
             />
             <span className="font-heading">Activo</span>
           </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              name="is_on_promotion"
+              checked={formData.is_on_promotion}
+              onChange={handleChange}
+              className="w-5 h-5 accent-maldonado-red"
+            />
+            <span className="font-heading">En Promoción</span>
+          </label>
         </div>
       </div>
 
@@ -1328,6 +1339,7 @@ function BannerForm({ banner, onSave, onCancel }) {
     brand: banner?.brand || '',
     button_text: banner?.button_text || 'VER MÁS',
     button_link: banner?.button_link || '/catalogo',
+    product_codes: banner?.product_codes || '',
     banner_type: banner?.banner_type || 'promo',
     bg_color: banner?.bg_color || 'gradient-red',
     order: banner?.order || 0,
@@ -1580,6 +1592,23 @@ function BannerForm({ banner, onSave, onCancel }) {
               placeholder="/catalogo"
             />
           </div>
+        </div>
+
+        <div className="col-span-2">
+          <label className="block font-heading text-sm mb-1">
+            CÓDIGOS DE PRODUCTOS (opcional)
+          </label>
+          <textarea
+            name="product_codes"
+            value={formData.product_codes}
+            onChange={handleChange}
+            className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none font-mono text-sm"
+            placeholder="Ingrese códigos separados por coma o espacio: ABC123, DEF456, GHI789"
+            rows="3"
+          />
+          <p className="text-xs text-maldonado-chrome mt-1">
+            Si completás este campo, "VER MÁS" filtrará solo estos productos. Dejalo vacío para mostrar todos los productos en promoción.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -32,6 +32,7 @@ def product_to_response(p: Product) -> ProductResponse:
         is_active=p.is_active,
         is_featured=p.is_featured,
         is_new=p.is_new,
+        is_on_promotion=p.is_on_promotion,
         rating=p.rating,
         reviews_count=p.reviews_count,
         in_stock=p.in_stock,
@@ -54,6 +55,8 @@ async def list_products(
     in_stock: bool | None = None,
     featured: bool | None = None,
     is_new: bool | None = None,
+    on_promotion: bool | None = None,
+    codes: str | None = None,
     sort_by: str = Query("created_at", enum=["created_at", "price", "name", "rating"]),
     sort_order: str = Query("desc", enum=["asc", "desc"]),
     db: AsyncSession = Depends(get_db)
@@ -98,7 +101,17 @@ async def list_products(
     # New filter
     if is_new is not None:
         query = query.where(Product.is_new == is_new)
-    
+
+    # On promotion filter
+    if on_promotion is not None:
+        query = query.where(Product.is_on_promotion == on_promotion)
+
+    # Product codes filter (from banner)
+    if codes:
+        code_list = [c.strip().upper() for c in codes.replace(',', ' ').split() if c.strip()]
+        if code_list:
+            query = query.where(Product.code.in_(code_list))
+
     # Sorting
     sort_column = getattr(Product, sort_by)
     if sort_order == "desc":
@@ -144,6 +157,8 @@ async def search_products(
     category_slug: str | None = None,
     brand: str | None = None,
     in_stock: bool | None = None,
+    on_promotion: bool | None = None,
+    codes: str | None = None,
     sort_by: str = Query("name", enum=["created_at", "price", "name", "rating"]),
     sort_order: str = Query("asc", enum=["asc", "desc"]),
     db: AsyncSession = Depends(get_db)
@@ -184,6 +199,16 @@ async def search_products(
         query = query.where(Product.stock > 0)
     elif in_stock is False:
         query = query.where(Product.stock == 0)
+
+    # On promotion filter
+    if on_promotion is not None:
+        query = query.where(Product.is_on_promotion == on_promotion)
+
+    # Product codes filter (from banner)
+    if codes:
+        code_list = [c.strip().upper() for c in codes.replace(',', ' ').split() if c.strip()]
+        if code_list:
+            query = query.where(Product.code.in_(code_list))
 
     # Sorting
     sort_column = getattr(Product, sort_by)
