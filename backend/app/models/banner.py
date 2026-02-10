@@ -26,6 +26,9 @@ class Banner(Base):
     # Botón CTA
     button_text: Mapped[str | None] = mapped_column(String(50), nullable=True)
     button_link: Mapped[str | None] = mapped_column(String(200), nullable=True)
+
+    # Códigos de productos asociados (opcional)
+    product_codes: Mapped[str | None] = mapped_column(Text, nullable=True)
     
     # Tipo: 'promo', 'news', 'product', 'general'
     banner_type: Mapped[str] = mapped_column(String(20), default='promo')

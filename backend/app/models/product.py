@@ -17,6 +17,7 @@ class Product(Base):
         Index('ix_products_active_featured', 'is_active', 'is_featured'),
         Index('ix_products_active_created', 'is_active', 'created_at'),
         Index('ix_products_active_price', 'is_active', 'price'),
+        Index('ix_products_active_on_promotion', 'is_active', 'is_on_promotion'),
         {'sqlite_autoincrement': True},
     )
 
@@ -43,6 +44,7 @@ class Product(Base):
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     is_featured: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_new: Mapped[bool] = mapped_column(default=False, nullable=False)
+    is_on_promotion: Mapped[bool] = mapped_column(default=False, nullable=False)
     
     # Stats
     rating: Mapped[Decimal] = mapped_column(Numeric(2, 1), default=Decimal("0.0"), nullable=False)

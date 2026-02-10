@@ -41,6 +41,7 @@ class ProductBase(BaseModel):
     is_active: bool = True
     is_featured: bool = False
     is_new: bool = False
+    is_on_promotion: bool = False
 
 
 class ProductCreate(ProductBase):
@@ -61,6 +62,7 @@ class ProductUpdate(BaseModel):
     is_active: bool | None = None
     is_featured: bool | None = None
     is_new: bool | None = None
+    is_on_promotion: bool | None = None
     images: list[ProductImageCreate] | None = None  # Reemplaza todas las imágenes
 
 
@@ -89,6 +91,7 @@ class ProductResponse(BaseModel):
     is_active: bool
     is_featured: bool
     is_new: bool
+    is_on_promotion: bool
     rating: Decimal
     reviews_count: int
     in_stock: bool
