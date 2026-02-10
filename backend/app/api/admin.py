@@ -278,6 +278,7 @@ def product_to_response(p: Product) -> ProductResponse:
         is_active=p.is_active,
         is_featured=p.is_featured,
         is_new=p.is_new,
+        is_on_promotion=p.is_on_promotion,
         rating=p.rating,
         reviews_count=p.reviews_count,
         in_stock=p.in_stock,
