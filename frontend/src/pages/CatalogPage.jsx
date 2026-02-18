@@ -1,7 +1,7 @@
 /**
  * Página de Catálogo - Lista de productos con filtros
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
@@ -10,6 +10,7 @@ import {
   Package, ChevronRight, ArrowLeft, Home
 } from 'lucide-react'
 import api from '../lib/api'
+import { formatPrice } from '../lib/format'
 import ProductCard from '../components/ProductCard'
 import { ProductGridSkeleton } from '../components/ProductCardSkeleton'
 
@@ -151,16 +152,8 @@ export default function CatalogPage({ onQuoteRequest }) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [page])
 
-  // Get unique brands from products
-  const brands = [...new Set(products.map(p => p.brand))].sort()
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-    }).format(price)
-  }
+  // Get unique brands from products (memoizado)
+  const brands = useMemo(() => [...new Set(products.map(p => p.brand))].sort(), [products])
 
   return (
     <div className="min-h-screen bg-maldonado-cream pt-20 sm:pt-28">
@@ -227,7 +220,7 @@ export default function CatalogPage({ onQuoteRequest }) {
             <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
               <Link
                 to="/catalogo"
-                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-maldonado-dark text-white font-heading text-xs sm:text-sm rounded-lg sm:rounded-none"
+                className="px-3 sm:px-4 py-2.5 bg-maldonado-dark text-white font-heading text-xs sm:text-sm rounded-lg sm:rounded-none min-h-[44px] flex items-center"
               >
                 TODOS
               </Link>
@@ -235,8 +228,8 @@ export default function CatalogPage({ onQuoteRequest }) {
                 <Link
                   key={cat.id}
                   to={`/catalogo/${cat.slug}`}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-maldonado-dark text-maldonado-dark
-                           font-heading text-xs sm:text-sm hover:bg-maldonado-dark hover:text-white transition-colors whitespace-nowrap rounded-lg sm:rounded-none"
+                  className="px-3 sm:px-4 py-2.5 border-2 border-maldonado-dark text-maldonado-dark
+                           font-heading text-xs sm:text-sm hover:bg-maldonado-dark hover:text-white transition-colors whitespace-nowrap rounded-lg sm:rounded-none min-h-[44px] flex items-center"
                 >
                   {cat.name.toUpperCase()} <span className="hidden sm:inline">({cat.products_count})</span>
                 </Link>
@@ -271,8 +264,8 @@ export default function CatalogPage({ onQuoteRequest }) {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="flex-1 sm:flex-none border-2 border-maldonado-dark px-2 sm:px-3 py-1.5 sm:py-2 font-heading text-xs sm:text-sm 
-                           focus:border-maldonado-red outline-none bg-white rounded-lg sm:rounded-none"
+                  className="flex-1 sm:flex-none border-2 border-maldonado-dark px-2 sm:px-3 py-2.5 font-heading text-xs sm:text-sm
+                           focus:border-maldonado-red outline-none bg-white rounded-lg sm:rounded-none min-h-[44px]"
                 >
                   {SORT_OPTIONS.map(opt => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -283,7 +276,7 @@ export default function CatalogPage({ onQuoteRequest }) {
               {/* Filters Toggle */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 border-2 font-heading text-xs sm:text-sm transition-colors rounded-lg sm:rounded-none
+                className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2.5 border-2 font-heading text-xs sm:text-sm transition-colors rounded-lg sm:rounded-none min-h-[44px]
                   ${showFilters 
                     ? 'bg-maldonado-dark text-white border-maldonado-dark' 
                     : 'border-maldonado-dark text-maldonado-dark hover:bg-maldonado-dark hover:text-white'
@@ -297,15 +290,15 @@ export default function CatalogPage({ onQuoteRequest }) {
               <div className="flex border-2 border-maldonado-dark rounded-lg sm:rounded-none overflow-hidden">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-1.5 sm:p-2 ${viewMode === 'grid' ? 'bg-maldonado-dark text-white' : ''}`}
+                  className={`p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center ${viewMode === 'grid' ? 'bg-maldonado-dark text-white' : ''}`}
                 >
-                  <Grid3X3 className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <Grid3X3 className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-1.5 sm:p-2 ${viewMode === 'list' ? 'bg-maldonado-dark text-white' : ''}`}
+                  className={`p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center ${viewMode === 'list' ? 'bg-maldonado-dark text-white' : ''}`}
                 >
-                  <List className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <List className="w-5 h-5" />
                 </button>
               </div>
             </div>
@@ -404,15 +397,16 @@ export default function CatalogPage({ onQuoteRequest }) {
                 ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6' 
                 : 'grid-cols-1'
             }`}>
-              {products.map((product, index) => (
+              {products.map((product) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.03 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <ProductCard 
-                    product={product} 
+                  <ProductCard
+                    product={product}
                     onQuoteRequest={onQuoteRequest}
                     viewMode={viewMode}
                   />
@@ -426,24 +420,24 @@ export default function CatalogPage({ onQuoteRequest }) {
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-maldonado-dark font-heading text-xs sm:text-sm rounded-lg sm:rounded-none
+                  className="px-3 sm:px-4 py-2.5 border-2 border-maldonado-dark font-heading text-xs sm:text-sm rounded-lg sm:rounded-none
                            disabled:opacity-50 disabled:cursor-not-allowed
-                           hover:bg-maldonado-dark hover:text-white transition-colors"
+                           hover:bg-maldonado-dark hover:text-white transition-colors min-h-[44px]"
                 >
                   <span className="hidden xs:inline">ANTERIOR</span>
                   <span className="xs:hidden">←</span>
                 </button>
-                
-                <span className="px-3 sm:px-4 py-1.5 sm:py-2 font-mono text-sm">
+
+                <span className="px-3 sm:px-4 py-2.5 font-mono text-sm">
                   {page} / {totalPages}
                 </span>
-                
+
                 <button
                   onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-maldonado-dark font-heading text-xs sm:text-sm rounded-lg sm:rounded-none
+                  className="px-3 sm:px-4 py-2.5 border-2 border-maldonado-dark font-heading text-xs sm:text-sm rounded-lg sm:rounded-none
                            disabled:opacity-50 disabled:cursor-not-allowed
-                           hover:bg-maldonado-dark hover:text-white transition-colors"
+                           hover:bg-maldonado-dark hover:text-white transition-colors min-h-[44px]"
                 >
                   <span className="hidden xs:inline">SIGUIENTE</span>
                   <span className="xs:hidden">→</span>

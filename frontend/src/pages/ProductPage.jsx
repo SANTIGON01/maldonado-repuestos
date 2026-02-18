@@ -5,12 +5,13 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  ChevronRight, ShoppingCart, Star, 
+  ChevronRight, ShoppingCart, Star,
   Package, Truck, Shield, ArrowLeft, Plus, Minus,
-  Check, ChevronLeft, ZoomIn
+  Check, ChevronLeft, ZoomIn, X
 } from 'lucide-react'
 import api from '../lib/api'
 import { useLocalCartStore } from '../store/localCartStore'
+import { optimizeImage, optimizeCloudinaryUrl } from '../lib/cloudinary'
 
 export default function ProductPage({ onQuoteRequest, onLoginClick }) {
   const { productId } = useParams()
@@ -159,7 +160,7 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
-                      src={currentImage}
+                      src={optimizeImage(currentImage, 'productDetail')}
                       alt={product.name}
                       className="w-full h-full object-contain cursor-zoom-in"
                       onClick={() => setShowZoom(true)}
@@ -197,15 +198,15 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                   )}
                 </div>
 
-                {/* Zoom indicator - oculto en móvil pequeño */}
+                {/* Zoom indicator */}
                 {currentImage && (
                   <button
                     onClick={() => setShowZoom(true)}
-                    className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 p-1.5 sm:p-2 bg-white/80 backdrop-blur-sm 
-                             border-2 border-maldonado-dark hover:bg-white transition-colors"
+                    className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 p-3 bg-white/80 backdrop-blur-sm
+                             border-2 border-maldonado-dark hover:bg-white transition-colors touch-target"
                     title="Ampliar imagen"
                   >
-                    <ZoomIn className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <ZoomIn className="w-5 h-5" />
                   </button>
                 )}
 
@@ -213,22 +214,22 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                 {images.length > 1 && (
                   <>
                     <button
-                      onClick={() => setSelectedImageIndex(prev => 
+                      onClick={() => setSelectedImageIndex(prev =>
                         prev === 0 ? images.length - 1 : prev - 1
                       )}
-                      className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-white/80 backdrop-blur-sm 
-                               border-2 border-maldonado-dark hover:bg-white transition-colors"
+                      className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 p-3 bg-white/80 backdrop-blur-sm
+                               border-2 border-maldonado-dark hover:bg-white transition-colors touch-target"
                     >
-                      <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => setSelectedImageIndex(prev => 
+                      onClick={() => setSelectedImageIndex(prev =>
                         prev === images.length - 1 ? 0 : prev + 1
                       )}
-                      className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-white/80 backdrop-blur-sm 
-                               border-2 border-maldonado-dark hover:bg-white transition-colors"
+                      className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 p-3 bg-white/80 backdrop-blur-sm
+                               border-2 border-maldonado-dark hover:bg-white transition-colors touch-target"
                     >
-                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <ChevronRight className="w-5 h-5" />
                     </button>
                   </>
                 )}
@@ -247,8 +248,8 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                           : 'border-maldonado-light-gray hover:border-maldonado-dark'
                       }`}
                     >
-                      <img 
-                        src={img.image_url} 
+                      <img
+                        src={optimizeImage(img.image_url, 'cartThumb')}
                         alt={`Vista ${index + 1}`}
                         className="w-full h-full object-contain bg-white"
                       />
@@ -354,14 +355,14 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                 <div className="flex items-center justify-center border-2 border-maldonado-dark rounded-lg">
                   <button
                     onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    className="p-2.5 sm:p-3 hover:bg-maldonado-light-gray transition-colors"
+                    className="p-3 hover:bg-maldonado-light-gray transition-colors touch-target flex items-center justify-center"
                   >
-                    <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <Minus className="w-5 h-5" />
                   </button>
                   <span className="px-4 sm:px-6 font-mono text-base sm:text-lg">{quantity}</span>
                   <button
                     onClick={() => setQuantity(q => Math.min(99, q + 1))}
-                    className="p-2.5 sm:p-3 hover:bg-maldonado-light-gray transition-colors"
+                    className="p-3 hover:bg-maldonado-light-gray transition-colors touch-target flex items-center justify-center"
                   >
                     <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
@@ -426,9 +427,9 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
             {/* Botón cerrar */}
             <button
               onClick={() => setShowZoom(false)}
-              className="absolute top-4 right-4 p-2 bg-white/10 text-white hover:bg-white/20 transition-colors"
+              className="absolute top-4 right-4 p-3 bg-white/10 text-white hover:bg-white/20 transition-colors touch-target rounded-full"
             >
-              ✕
+              <X className="w-6 h-6" />
             </button>
 
             {/* Navegación */}
@@ -439,8 +440,8 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                     e.stopPropagation()
                     setSelectedImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1)
                   }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 text-white 
-                           hover:bg-white/20 transition-colors"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 text-white
+                           hover:bg-white/20 transition-colors touch-target"
                 >
                   <ChevronLeft className="w-8 h-8" />
                 </button>
@@ -449,20 +450,27 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                     e.stopPropagation()
                     setSelectedImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1)
                   }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 text-white 
-                           hover:bg-white/20 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 text-white
+                           hover:bg-white/20 transition-colors touch-target"
                 >
                   <ChevronRight className="w-8 h-8" />
                 </button>
               </>
             )}
 
-            {/* Imagen ampliada */}
+            {/* Imagen ampliada con swipe */}
             <motion.img
               key={selectedImageIndex}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
+              drag={images.length > 1 ? "x" : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(e, { offset }) => {
+                if (offset.x < -80) setSelectedImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1)
+                else if (offset.x > 80) setSelectedImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1)
+              }}
               src={currentImage}
               alt={product.name}
               className="max-w-full max-h-[85vh] object-contain"
@@ -471,7 +479,7 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
 
             {/* Indicador de imagen */}
             {images.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
                 {images.map((_, index) => (
                   <button
                     key={index}
@@ -479,10 +487,12 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                       e.stopPropagation()
                       setSelectedImageIndex(index)
                     }}
-                    className={`w-3 h-3 rounded-full transition-colors ${
+                    className="p-3 touch-target flex items-center justify-center"
+                  >
+                    <span className={`block w-3 h-3 rounded-full transition-colors ${
                       selectedImageIndex === index ? 'bg-white' : 'bg-white/40'
-                    }`}
-                  />
+                    }`} />
+                  </button>
                 ))}
               </div>
             )}

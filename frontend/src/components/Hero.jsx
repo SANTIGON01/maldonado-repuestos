@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowRight, ArrowDown, Truck, Shield, Wrench, ChevronLeft, ChevronRight, Percent, Sparkles, Package } from 'lucide-react'
 import api from '../lib/api'
+import { optimizeImage } from '../lib/cloudinary'
 
 // Slide principal (intro original)
 function IntroSlide() {
@@ -90,8 +91,8 @@ function IntroSlide() {
               />
               
               {/* Mini badges flotantes móvil */}
-              <div className="absolute -top-2 -right-2 bg-maldonado-red-700 text-white 
-                            px-2 py-1 text-[10px] font-mono rounded-full border border-maldonado-red-600">
+              <div className="absolute -top-2 -right-2 bg-maldonado-red-700 text-white
+                            px-2 py-1 text-xs font-mono rounded-full border border-maldonado-red-600">
                 +30 AÑOS
               </div>
             </div>
@@ -100,15 +101,15 @@ function IntroSlide() {
             <div className="flex justify-center gap-2 mt-3">
               <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
                 <Truck className="w-3 h-3 text-maldonado-red-500" />
-                <span className="text-[10px] text-white font-mono">ENVÍOS</span>
+                <span className="text-xs text-white font-mono">ENVÍOS</span>
               </div>
               <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
                 <Shield className="w-3 h-3 text-maldonado-red-500" />
-                <span className="text-[10px] text-white font-mono">GARANTÍA</span>
+                <span className="text-xs text-white font-mono">GARANTÍA</span>
               </div>
               <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
                 <Wrench className="w-3 h-3 text-maldonado-red-500" />
-                <span className="text-[10px] text-white font-mono">EXPERTOS</span>
+                <span className="text-xs text-white font-mono">EXPERTOS</span>
               </div>
             </div>
           </div>
@@ -128,7 +129,7 @@ function IntroSlide() {
           ].map((stat, i) => (
             <div key={i} className="text-center sm:text-left">
               <p className="font-display text-2xl sm:text-3xl lg:text-4xl text-maldonado-red-500">{stat.value}</p>
-              <p className="font-mono text-[10px] sm:text-xs text-white/40 mt-1">{stat.label}</p>
+              <p className="font-mono text-xs text-white/40 mt-1">{stat.label}</p>
             </div>
           ))}
         </motion.div>
@@ -163,36 +164,24 @@ function IntroSlide() {
             <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-maldonado-red-700" />
           </div>
 
-          {/* Floating cards */}
-          <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 4, repeat: Infinity }}
-            className="absolute -left-12 top-1/4 bg-maldonado-dark border-2 border-maldonado-chrome/30 p-4"
-          >
+          {/* Floating cards - CSS animation en vez de Framer Motion (menos JS overhead) */}
+          <div className="absolute -left-12 top-1/4 bg-maldonado-dark border-2 border-maldonado-chrome/30 p-4 animate-float">
             <Truck className="w-8 h-8 text-maldonado-red-500 mb-2" />
             <p className="font-heading text-white text-sm">ENVÍOS</p>
             <p className="font-mono text-white/50 text-xs">A TODO EL PAÍS</p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 5, repeat: Infinity }}
-            className="absolute -right-8 top-1/2 bg-maldonado-red-700 border-2 border-maldonado-red-600 p-4"
-          >
+          <div className="absolute -right-8 top-1/2 bg-maldonado-red-700 border-2 border-maldonado-red-600 p-4 animate-float" style={{ animationDelay: '1s', animationDirection: 'reverse' }}>
             <Shield className="w-8 h-8 text-white mb-2" />
             <p className="font-heading text-white text-sm">GARANTÍA</p>
             <p className="font-mono text-white/80 text-xs">OFICIAL</p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 4.5, repeat: Infinity }}
-            className="absolute -left-4 -bottom-8 bg-white border-2 border-maldonado-dark p-4 shadow-brutal-sm"
-          >
+          <div className="absolute -left-4 -bottom-8 bg-white border-2 border-maldonado-dark p-4 shadow-brutal-sm animate-float" style={{ animationDelay: '2s' }}>
             <Wrench className="w-8 h-8 text-maldonado-dark mb-2" />
             <p className="font-heading text-maldonado-dark text-sm">EXPERTOS</p>
             <p className="font-mono text-maldonado-chrome text-xs">EN EL RUBRO</p>
-          </motion.div>
+          </div>
         </div>
       </motion.div>
     </div>
@@ -244,8 +233,8 @@ function PromoSlide({ banner }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white 
-                       px-3 sm:px-4 py-1.5 sm:py-2 font-mono text-[10px] sm:text-xs uppercase tracking-wider border border-white/20 rounded-full">
+          <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white
+                       px-3 sm:px-4 py-1.5 sm:py-2 font-mono text-xs uppercase tracking-wider border border-white/20 rounded-full">
             <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
             {banner.banner_type === 'promo' ? 'PROMOCIÓN' : 
              banner.banner_type === 'news' ? 'NOVEDAD' : 
@@ -316,14 +305,14 @@ function PromoSlide({ banner }) {
                           border border-white/20 overflow-hidden shadow-xl`}>
               <div className="absolute inset-0 flex items-center justify-center p-3">
                 <img
-                  src={banner.image_url}
+                  src={optimizeImage(banner.image_url, 'cardGrid')}
                   alt={banner.title}
                   className="w-full h-full object-contain drop-shadow-xl"
                 />
               </div>
               {/* Badge de tipo */}
-              <div className="absolute top-2 left-2 bg-white/90 text-maldonado-dark 
-                            px-2 py-1 text-[10px] font-bold rounded-full">
+              <div className="absolute top-2 left-2 bg-white/90 text-maldonado-dark
+                            px-2 py-1 text-xs font-bold rounded-full">
                 {banner.banner_type === 'promo' ? '¡OFERTA!' : '¡NUEVO!'}
               </div>
             </div>
@@ -370,7 +359,7 @@ function PromoSlide({ banner }) {
               {/* Imagen del producto - MÁS GRANDE */}
               <div className="absolute inset-0 flex items-center justify-center p-6">
                 <motion.img
-                  src={banner.image_url}
+                  src={optimizeImage(banner.image_url, 'heroBanner')}
                   alt={banner.title}
                   className="w-full h-full object-contain drop-shadow-2xl"
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -491,7 +480,7 @@ export default function Hero({ onQuoteClick }) {
   }, [currentSlide, totalSlides, goToSlide])
 
   return (
-    <section className="relative min-h-screen bg-maldonado-dark overflow-hidden">
+    <section className="relative min-h-[100dvh] bg-maldonado-dark overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0">
         {/* Grid pattern */}
@@ -515,7 +504,7 @@ export default function Hero({ onQuoteClick }) {
       </div>
 
       {/* Main content - Slider */}
-      <div className="relative z-10 container-custom min-h-screen flex items-center pt-24 sm:pt-32 pb-28 sm:pb-24 px-4 sm:px-6">
+      <div className="relative z-10 container-custom min-h-[100dvh] flex items-center pt-24 sm:pt-32 pb-28 sm:pb-24 px-4 sm:px-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
@@ -523,6 +512,14 @@ export default function Hero({ onQuoteClick }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.5 }}
+            drag={totalSlides > 1 ? "x" : false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = Math.abs(offset.x) * velocity.x
+              if (swipe < -5000 || offset.x < -80) nextSlide()
+              else if (swipe > 5000 || offset.x > 80) prevSlide()
+            }}
             className="w-full"
           >
             {currentSlide === 0 ? (
@@ -540,39 +537,41 @@ export default function Hero({ onQuoteClick }) {
           {/* Flechas de navegación - ocultas en móvil pequeño, visibles en sm+ */}
           <button
             onClick={prevSlide}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20
                      bg-white/10 hover:bg-white/20 backdrop-blur-sm
                      p-2 sm:p-3 rounded-full transition-all border border-white/20
-                     hover:scale-110 hidden xs:flex items-center justify-center"
+                     hover:scale-110 flex items-center justify-center touch-target"
             aria-label="Slide anterior"
           >
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </button>
-          
+
           <button
             onClick={nextSlide}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20
                      bg-white/10 hover:bg-white/20 backdrop-blur-sm
                      p-2 sm:p-3 rounded-full transition-all border border-white/20
-                     hover:scale-110 hidden xs:flex items-center justify-center"
+                     hover:scale-110 flex items-center justify-center touch-target"
             aria-label="Siguiente slide"
           >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </button>
 
           {/* Indicadores de posición - siempre visibles, mejor posicionados en móvil */}
-          <div className="absolute bottom-24 sm:bottom-20 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          <div className="absolute bottom-24 sm:bottom-20 left-1/2 -translate-x-1/2 z-20 flex gap-1">
             {Array.from({ length: totalSlides }).map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  currentSlide === index 
-                    ? 'w-6 sm:w-8 bg-maldonado-red-500' 
-                    : 'w-2 bg-white/30 hover:bg-white/50'
-                }`}
+                className="p-3 flex items-center justify-center touch-target"
                 aria-label={`Ir al slide ${index + 1}`}
-              />
+              >
+                <span className={`block h-2 rounded-full transition-all duration-300 ${
+                  currentSlide === index
+                    ? 'w-6 sm:w-8 bg-maldonado-red-500'
+                    : 'w-2 bg-white/30 hover:bg-white/50'
+                }`} />
+              </button>
             ))}
           </div>
         </>

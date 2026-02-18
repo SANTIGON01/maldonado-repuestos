@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ShoppingCart, FileText, Star, Package, Eye, Check } from 'lucide-react'
 import { useLocalCartStore } from '../store/localCartStore'
+import { optimizeImage } from '../lib/cloudinary'
 
 const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMode = 'grid' }) {
   const [addedToCart, setAddedToCart] = useState(false)
@@ -54,7 +55,7 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
           <div className="w-28 h-28 flex-shrink-0 bg-zinc-100 rounded-lg overflow-hidden p-2 flex items-center justify-center">
             {product.image_url ? (
               <img
-                src={product.image_url}
+                src={optimizeImage(product.image_url, 'cardList')}
                 alt={product.name}
                 loading="lazy"
                 className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform"
@@ -74,7 +75,7 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
                 <div className="flex items-center gap-2 mb-1">
                   <p className="text-xs text-zinc-400 font-mono">{product.code}</p>
                   {product.is_on_promotion && (
-                    <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                       🔥 OFERTA
                     </span>
                   )}
@@ -176,7 +177,7 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
           {product.image_url ? (
             <div className="w-full h-full p-4 flex items-center justify-center">
               <img
-                src={product.image_url}
+                src={optimizeImage(product.image_url, 'cardGrid')}
                 alt={product.name}
                 loading="lazy"
                 className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
@@ -195,17 +196,17 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
           {/* Badges */}
           <div className="absolute top-2 sm:top-3 left-2 sm:left-3 flex flex-col gap-1">
             {product.is_on_promotion && (
-              <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] sm:text-xs font-bold px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-lg animate-pulse">
+              <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs sm:text-xs font-bold px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-lg animate-pulse">
                 🔥 OFERTA
               </span>
             )}
             {product.is_new && (
-              <span className="bg-maldonado-red text-white text-[10px] sm:text-xs font-bold px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full">
+              <span className="bg-maldonado-red text-white text-xs sm:text-xs font-bold px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full">
                 NUEVO
               </span>
             )}
             {product.discount_percent && (
-              <span className="bg-maldonado-dark text-white text-[10px] sm:text-xs font-bold px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full">
+              <span className="bg-maldonado-dark text-white text-xs sm:text-xs font-bold px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full">
                 -{product.discount_percent}%
               </span>
             )}
@@ -235,7 +236,7 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
         {/* Content */}
         <div className="p-2.5 sm:p-4 flex flex-col flex-1">
           {/* Brand & Code */}
-          <div className="flex items-center justify-between text-[10px] sm:text-xs mb-1.5 sm:mb-2">
+          <div className="flex items-center justify-between text-xs mb-1.5 sm:mb-2">
             <span className="font-heading uppercase text-zinc-500 bg-zinc-100 px-1.5 sm:px-2 py-0.5 rounded truncate max-w-[60%]">
               {product.brand}
             </span>
@@ -243,7 +244,7 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
           </div>
 
           {/* Name */}
-          <h3 className="font-heading text-xs sm:text-base text-zinc-800 mb-1.5 sm:mb-2 line-clamp-2 
+          <h3 className="font-heading text-sm sm:text-base text-zinc-800 mb-1.5 sm:mb-2 line-clamp-2
                        group-hover:text-maldonado-red transition-colors leading-tight">
             {product.name}
           </h3>
@@ -264,25 +265,25 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
             {hasPrice ? (
               <div className="flex flex-col">
                 {product.original_price && (
-                  <span className="text-[10px] sm:text-sm text-zinc-400 line-through">
+                  <span className="text-xs sm:text-sm text-zinc-400 line-through">
                     {formatPrice(product.original_price)}
                   </span>
                 )}
                 <span className="text-sm sm:text-xl font-display text-maldonado-red">
                   {formatPrice(product.price)}
                 </span>
-                <span className="text-[10px] sm:text-xs text-zinc-500 font-mono mt-0.5">
+                <span className="text-xs sm:text-xs text-zinc-500 font-mono mt-0.5">
                   + IVA
                 </span>
               </div>
             ) : (
               <div className="flex flex-col">
                 <span className="inline-block bg-gradient-to-r from-maldonado-red/10 to-maldonado-red/5
-                               text-maldonado-red font-heading text-[10px] sm:text-sm px-2 sm:px-4 py-1 sm:py-1.5 rounded-full
+                               text-maldonado-red font-heading text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-1.5 rounded-full
                                border border-maldonado-red/20">
                   💬 CONSULTAR
                 </span>
-                <span className="text-[10px] sm:text-xs text-zinc-500 font-mono mt-1">
+                <span className="text-xs sm:text-xs text-zinc-500 font-mono mt-1">
                   + IVA
                 </span>
               </div>
@@ -296,35 +297,35 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
               disabled={!product.in_stock}
               className={`flex-1 font-bold py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg sm:rounded-xl
                        flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm
-                       disabled:opacity-50 disabled:cursor-not-allowed 
-                       transition-all duration-200
-                       ${addedToCart 
-                         ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' 
+                       disabled:opacity-50 disabled:cursor-not-allowed
+                       transition-all duration-200 min-h-[44px]
+                       ${addedToCart
+                         ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
                          : 'bg-maldonado-red text-white hover:bg-maldonado-red-700 hover:shadow-lg hover:shadow-maldonado-red/30'}`}
             >
               {addedToCart ? (
                 <>
-                  <Check className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden xs:inline">Agregado</span>
-                  <span className="xs:hidden">✓</span>
+                  <Check className="w-4 h-4" />
+                  <span>Agregado</span>
                 </>
               ) : (
                 <>
-                  <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden xs:inline">Agregar</span>
+                  <ShoppingCart className="w-4 h-4" />
+                  <span>Agregar</span>
                 </>
               )}
             </button>
-            
+
             {onQuoteRequest && (
               <button
                 onClick={handleQuote}
                 className="bg-zinc-100 text-zinc-700 font-bold py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg sm:rounded-xl
-                         flex items-center justify-center 
-                         hover:bg-zinc-200 transition-colors"
+                         flex items-center justify-center
+                         hover:bg-zinc-200 transition-colors min-h-[44px] min-w-[44px]"
+                aria-label="Cotizar"
                 title="Solicitar cotización"
               >
-                <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
+                <FileText className="w-4 h-4" />
               </button>
             )}
           </div>
