@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(dir *)",
+      "Bash(curl *)",
+      "Bash(npm *)",
+      "Bash(pip *)",
+      "Bash(pip3 *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(pytest *)",
+      "Bash(uvicorn *)",
+      "Bash(alembic *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(rm *)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "mcp__notion__*",
+      "Bash(python -m uvicorn:*)",
+      "Bash(timeout 5 bash -c \"until curl -s http://localhost:8000/api/health > /dev/null; do sleep 1; done && echo ''Backend started successfully''\")",
+      "Bash(git pull:*)",
+      "Bash(tree:*)",
+      "Bash(python:*)",
+      "Bash(RAILWAY_DATABASE_URL=\"postgresql://postgres:WWyhPQOYtUAMueUfEuXxGbSxBQDGyPdF@gondola.proxy.rlwy.net:53562/railway\" python:*)"
+    ]
+  }
+}

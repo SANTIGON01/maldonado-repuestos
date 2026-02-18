@@ -52,6 +52,9 @@ tmpclaude-*
 *.sqlite
 *.sqlite3
 
+# Backups (datos sensibles de producción)
+backend/backups/
+
 # Uploads (imágenes subidas localmente - en producción se usa Cloudinary)
 backend/uploads/
 
