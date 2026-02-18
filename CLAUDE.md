@@ -28,6 +28,53 @@
 - Variables sensibles en .env, nunca hardcodeadas
 - PostgreSQL en prod, SQLite en dev
 
+## Base de datos: Migraciones y Backups
+
+### Alembic (migraciones)
+Configurado en `backend/alembic.ini` + `backend/alembic/env.py` (async con asyncpg).
+
+**Flujo: siempre probar en local antes de producción.**
+
+```bash
+cd backend
+
+# 1. Crear migración tras modificar modelos SQLAlchemy
+alembic revision --autogenerate -m "descripción del cambio"
+
+# 2. Revisar el archivo generado en alembic/versions/
+
+# 3. Aplicar en DB LOCAL
+alembic upgrade head
+
+# 4. Verificar que la app funciona con la DB local
+
+# 5. Aplicar en RAILWAY (producción)
+DATABASE_URL="postgresql+asyncpg://user:pass@host:port/db" alembic upgrade head
+```
+
+- La URL local está en `alembic.ini` (placeholder, ajustar en .env)
+- Para Railway se pasa `DATABASE_URL` como variable de entorno
+- `env.py` prioriza `DATABASE_URL` sobre `alembic.ini`
+- Nunca correr migraciones en producción sin probar en local primero
+
+### Backup de Railway
+Script `backend/backup_db.py` — solo lectura sobre Railway.
+
+```bash
+cd backend
+
+# Backup a PostgreSQL local (copia todas las tablas)
+python backup_db.py
+
+# Backup a archivos JSON
+python backup_db.py --format json --output ./backups/
+```
+
+- Requiere `RAILWAY_DATABASE_URL` en `.env` o como variable de entorno
+- La carpeta `backend/backups/` está en `.gitignore` (datos sensibles)
+- Orden de tablas respeta foreign keys automáticamente
+- Para DB local usa `LOCAL_DATABASE_URL` o default `localhost:5432/maldonado`
+
 ## Delegación a subagentes
 Subagentes definidos en `.claude/agents/`. Delegar según área:
 - **ecommerce-builder** → Features completas end-to-end (API + schema + modelo + React)
