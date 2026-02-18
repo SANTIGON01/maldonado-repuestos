@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
     
+    # Railway Database (solo para backups, no usado por la app)
+    RAILWAY_DATABASE_URL: str = ""
+
     # CORS - URL del frontend (Vercel en produccion)
     FRONTEND_URL: str = "http://localhost:3000"
 
