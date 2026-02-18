@@ -58,7 +58,7 @@ def get_source_url() -> str:
 
 def get_local_url() -> str:
     """URL de la DB local para restaurar."""
-    url = os.getenv("LOCAL_DATABASE_URL", "postgresql://postgres:Santi2012@localhost:5432/maldonado")
+    url = os.getenv("LOCAL_DATABASE_URL", "postgresql://postgres:password@localhost:5432/maldonado")
     if "+asyncpg" in url:
         url = url.replace("+asyncpg", "", 1)
     return url
@@ -182,8 +182,8 @@ def backup_to_local_db() -> None:
                         f"SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), "
                         f"COALESCE((SELECT MAX(id) FROM \"{table_name}\"), 0) + 1, false)"
                     ))
-                except Exception:
-                    pass  # Tabla sin columna id serial
+                except Exception as e:
+                    print(f"  WARN: No se pudo resetear secuencia de {table_name}: {e}")
 
     source_engine.dispose()
     local_engine.dispose()
