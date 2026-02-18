@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     # Database - Se configura via variable de entorno DATABASE_URL
     # Railway genera automaticamente esta variable al agregar PostgreSQL
     # En desarrollo local usa PostgreSQL local
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:Santi2012@localhost:5432/maldonado"
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:password@localhost:5432/maldonado"
     
     @field_validator('DATABASE_URL', mode='before')
     @classmethod
@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
     
+    # Railway Database (solo para backups, no usado por la app)
+    RAILWAY_DATABASE_URL: str = ""
+
     # CORS - URL del frontend (Vercel en produccion)
     FRONTEND_URL: str = "http://localhost:3000"
 
