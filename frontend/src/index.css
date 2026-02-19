@@ -14,6 +14,13 @@
     font-size: 14.5px;
   }
   
+  /* En móvil, font-size base de 16px para legibilidad */
+  @media (max-width: 639px) {
+    html {
+      font-size: 16px;
+    }
+  }
+
   /* En pantallas grandes (1280px+), un poco más grande */
   @media (min-width: 1280px) {
     html {
@@ -132,6 +139,12 @@
   .animate-delay-100 { animation-delay: 100ms; }
   .animate-delay-200 { animation-delay: 200ms; }
   .animate-delay-300 { animation-delay: 300ms; }
+
+  /* Safe area padding para iPhones con notch */
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+  /* Touch target mínimo de 44px (Apple HIG / WCAG) */
+  .touch-target { min-height: 44px; min-width: 44px; }
 
   /* Hide scrollbar but keep functionality */
   .scrollbar-hide {

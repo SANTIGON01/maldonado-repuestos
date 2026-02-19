@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Search, X, Package, Loader2, ArrowRight, Clock, TrendingUp } from 'lucide-react'
 import api from '../lib/api'
 import { useDebounce } from '../hooks/useDebounce'
+import { optimizeImage } from '../lib/cloudinary'
 
 export default function SearchBar({ onClose, isMobile = false }) {
   const navigate = useNavigate()
@@ -151,6 +152,8 @@ export default function SearchBar({ onClose, isMobile = false }) {
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="Buscar repuestos..."
+          inputMode="search"
+          enterKeyHint="search"
           className={`bg-white/10 border border-white/20 text-white placeholder:text-white/50
                      focus:outline-none focus:bg-white/20 focus:border-maldonado-red-700
                      transition-all font-mono ${
@@ -165,7 +168,8 @@ export default function SearchBar({ onClose, isMobile = false }) {
               setQuery('')
               inputRef.current?.focus()
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
+            className="absolute right-1 top-1/2 -translate-y-1/2 text-white/50 hover:text-white
+                     p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
           >
             <X className={isMobile ? 'w-5 h-5' : 'w-4 h-4'} />
           </button>
@@ -211,7 +215,7 @@ export default function SearchBar({ onClose, isMobile = false }) {
                     <button
                       key={index}
                       onClick={() => handleRecentClick(term)}
-                      className="flex items-center gap-2 w-full px-2 py-2 text-left text-sm text-zinc-700 
+                      className="flex items-center gap-2 w-full px-2 py-3 text-left text-sm text-zinc-700
                                hover:bg-zinc-100 rounded-lg transition-colors"
                     >
                       <Search className="w-4 h-4 text-zinc-400" />
@@ -246,7 +250,7 @@ export default function SearchBar({ onClose, isMobile = false }) {
                           <div className="w-12 h-12 bg-zinc-100 rounded-lg overflow-hidden flex-shrink-0">
                             {product.image_url ? (
                               <img
-                                src={product.image_url}
+                                src={optimizeImage(product.image_url, 'searchThumb')}
                                 alt={product.name}
                                 loading="lazy"
                                 className="w-full h-full object-cover"
@@ -260,10 +264,10 @@ export default function SearchBar({ onClose, isMobile = false }) {
 
                           {/* Info */}
                           <div className="flex-1 min-w-0">
-                            <p className="font-mono text-[10px] text-zinc-400">{product.code}</p>
+                            <p className="font-mono text-xs text-zinc-400">{product.code}</p>
                             <p className="text-sm font-medium text-zinc-800 truncate">{product.name}</p>
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded">
+                              <span className="text-xs text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded">
                                 {product.brand}
                               </span>
                               {formatPrice(product.price) ? (
@@ -271,7 +275,7 @@ export default function SearchBar({ onClose, isMobile = false }) {
                                   {formatPrice(product.price)}
                                 </span>
                               ) : (
-                                <span className="text-[10px] text-zinc-500">Consultar</span>
+                                <span className="text-xs text-zinc-500">Consultar</span>
                               )}
                             </div>
                           </div>

@@ -18,26 +18,25 @@ function WhatsAppIcon({ className }) {
 export default function WhatsAppButton() {
   const [showTooltip, setShowTooltip] = useState(false)
   const [hasInteracted, setHasInteracted] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false)
-  
+
   // Número de WhatsApp del negocio - Maipú, Mendoza
   const whatsappNumber = '5492614544128'
   const defaultMessage = encodeURIComponent(
     '¡Hola! 👋 Me comunico desde la web de Maldonado Repuestos.\n\n¿Podrían asesorarme sobre repuestos para semirremolques?'
   )
-  
+
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${defaultMessage}`
 
   // Mostrar tooltip automáticamente después de 4 segundos
   useEffect(() => {
     if (hasInteracted) return
-    
+
     const timer = setTimeout(() => {
       setShowTooltip(true)
       // Ocultar después de 6 segundos
       setTimeout(() => setShowTooltip(false), 6000)
     }, 4000)
-    
+
     return () => clearTimeout(timer)
   }, [hasInteracted])
 
@@ -48,7 +47,7 @@ export default function WhatsAppButton() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-40">
+    <div className="fixed bottom-6 right-6 z-40" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <AnimatePresence>
         {showTooltip && !hasInteracted && (
           <motion.div
@@ -57,21 +56,21 @@ export default function WhatsAppButton() {
             exit={{ opacity: 0, x: 20, scale: 0.9 }}
             className="absolute bottom-full right-0 mb-3 mr-2"
           >
-            <div className="bg-white rounded-2xl shadow-xl border border-zinc-200 p-4 
+            <div className="bg-white rounded-2xl shadow-xl border border-zinc-200 p-4
                           max-w-[260px] relative">
               {/* Arrow */}
-              <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white border-r border-b 
+              <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white border-r border-b
                             border-zinc-200 transform rotate-45" />
-              
-              <button 
+
+              <button
                 onClick={() => setShowTooltip(false)}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-zinc-100 rounded-full 
+                className="absolute -top-3 -right-3 w-10 h-10 bg-zinc-100 rounded-full
                          flex items-center justify-center text-zinc-400 hover:text-zinc-600
                          hover:bg-zinc-200 transition-colors shadow-sm"
               >
-                <X className="w-3 h-3" />
+                <X className="w-4 h-4" />
               </button>
-              
+
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                   <WhatsAppIcon className="w-5 h-5 text-green-600" />
@@ -83,7 +82,7 @@ export default function WhatsAppButton() {
                   <p className="text-xs text-zinc-500 mt-0.5">
                     Escribinos por WhatsApp y te asesoramos gratis
                   </p>
-                  <p className="text-[10px] text-green-600 mt-1 flex items-center gap-1">
+                  <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                     Respondemos en minutos
                   </p>
@@ -93,48 +92,23 @@ export default function WhatsAppButton() {
           </motion.div>
         )}
       </AnimatePresence>
-      
+
       {/* Main Button */}
       <motion.button
         onClick={handleClick}
-        onMouseEnter={() => {
-          setIsExpanded(true)
-          if (!hasInteracted) setShowTooltip(true)
-        }}
-        onMouseLeave={() => {
-          setIsExpanded(false)
-          setShowTooltip(false)
-        }}
-        whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="relative flex items-center gap-2 bg-gradient-to-br from-green-500 to-green-600 
+        className="relative flex items-center gap-2 bg-gradient-to-br from-green-500 to-green-600
                  text-white rounded-full shadow-lg shadow-green-500/40
-                 hover:shadow-xl hover:shadow-green-500/50 transition-all duration-300"
-        style={{ 
-          padding: isExpanded ? '14px 20px' : '16px',
-        }}
+                 hover:shadow-xl hover:shadow-green-500/50 transition-all duration-300
+                 p-4"
       >
         {/* Pulse animation */}
         <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-20" />
-        
+
         <WhatsAppIcon className="w-7 h-7 relative z-10" />
-        
-        {/* Texto expandible */}
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.span
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: 'auto' }}
-              exit={{ opacity: 0, width: 0 }}
-              className="font-heading text-sm whitespace-nowrap overflow-hidden relative z-10"
-            >
-              Cotizá ahora
-            </motion.span>
-          )}
-        </AnimatePresence>
-        
+
         {/* Online indicator */}
-        <span className="absolute -top-1 -right-1 flex items-center gap-1 bg-white rounded-full 
+        <span className="absolute -top-1 -right-1 flex items-center gap-1 bg-white rounded-full
                        px-1.5 py-0.5 shadow-md border border-zinc-100">
           <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           <span className="text-[9px] font-bold text-zinc-600">EN LÍNEA</span>

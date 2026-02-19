@@ -5,6 +5,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Trash2, Plus, Minus, ClipboardList, MessageCircle, Package } from 'lucide-react'
 import { useLocalCartStore } from '../store/localCartStore'
+import { optimizeImage } from '../lib/cloudinary'
 
 export default function QuoteCartSidebar({ isOpen, onClose, onRequestQuote }) {
   const { items, updateQuantity, removeItem } = useLocalCartStore()
@@ -29,7 +30,13 @@ export default function QuoteCartSidebar({ isOpen, onClose, onRequestQuote }) {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full sm:max-w-md bg-white 
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(e, { offset }) => {
+              if (offset.x > 100) onClose()
+            }}
+            className="fixed right-0 top-0 h-full w-full sm:max-w-md bg-white
                      shadow-2xl z-50 flex flex-col sm:rounded-l-2xl overflow-hidden"
           >
             {/* Header */}
@@ -43,7 +50,7 @@ export default function QuoteCartSidebar({ isOpen, onClose, onRequestQuote }) {
                   <p className="text-xs text-white/60 font-mono">{itemsCount} {itemsCount === 1 ? 'producto' : 'productos'}</p>
                 </div>
               </div>
-              <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+              <button onClick={onClose} className="p-3 hover:bg-white/10 rounded-lg transition-colors touch-target">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -77,7 +84,7 @@ export default function QuoteCartSidebar({ isOpen, onClose, onRequestQuote }) {
                                     overflow-hidden rounded-lg">
                         {item.product.image_url ? (
                           <img
-                            src={item.product.image_url}
+                            src={optimizeImage(item.product.image_url, 'cartThumb')}
                             alt={item.product.name}
                             className="w-full h-full object-cover"
                           />
@@ -106,16 +113,16 @@ export default function QuoteCartSidebar({ isOpen, onClose, onRequestQuote }) {
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
                               disabled={item.quantity <= 1}
-                              className="p-2 hover:bg-zinc-200 disabled:opacity-30 transition-colors"
+                              className="p-3 hover:bg-zinc-200 disabled:opacity-30 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                             >
-                              <Minus className="w-3 h-3" />
+                              <Minus className="w-4 h-4" />
                             </button>
                             <span className="font-mono w-8 text-center text-sm font-medium">{item.quantity}</span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="p-2 hover:bg-zinc-200 transition-colors"
+                              className="p-3 hover:bg-zinc-200 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                             >
-                              <Plus className="w-3 h-3" />
+                              <Plus className="w-4 h-4" />
                             </button>
                           </div>
                           <button
@@ -135,7 +142,7 @@ export default function QuoteCartSidebar({ isOpen, onClose, onRequestQuote }) {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="border-t border-zinc-200 p-4 space-y-4 bg-white">
+              <div className="border-t border-zinc-200 p-4 space-y-4 bg-white pb-safe">
                 <div className="flex justify-between items-center">
                   <span className="font-heading text-zinc-600">Total productos:</span>
                   <span className="font-display text-2xl text-maldonado-dark">{itemsCount}</span>
