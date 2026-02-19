@@ -202,7 +202,7 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                 {currentImage && (
                   <button
                     onClick={() => setShowZoom(true)}
-                    className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 p-3 bg-white/80 backdrop-blur-sm
+                    className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 p-3 bg-white/80 sm:backdrop-blur-sm
                              border-2 border-maldonado-dark hover:bg-white transition-colors touch-target"
                     title="Ampliar imagen"
                   >
@@ -217,7 +217,7 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                       onClick={() => setSelectedImageIndex(prev =>
                         prev === 0 ? images.length - 1 : prev - 1
                       )}
-                      className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 p-3 bg-white/80 backdrop-blur-sm
+                      className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 p-3 bg-white/80 sm:backdrop-blur-sm
                                border-2 border-maldonado-dark hover:bg-white transition-colors touch-target"
                     >
                       <ChevronLeft className="w-5 h-5" />
@@ -226,7 +226,7 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
                       onClick={() => setSelectedImageIndex(prev =>
                         prev === images.length - 1 ? 0 : prev + 1
                       )}
-                      className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 p-3 bg-white/80 backdrop-blur-sm
+                      className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 p-3 bg-white/80 sm:backdrop-blur-sm
                                border-2 border-maldonado-dark hover:bg-white transition-colors touch-target"
                     >
                       <ChevronRight className="w-5 h-5" />

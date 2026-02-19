@@ -3,7 +3,6 @@
  */
 import { useState, memo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { ShoppingCart, FileText, Star, Package, Eye, Check } from 'lucide-react'
 import { useLocalCartStore } from '../store/localCartStore'
 import { optimizeImage } from '../lib/cloudinary'
@@ -46,10 +45,9 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
   if (viewMode === 'list') {
     return (
       <Link to={`/producto/${product.id}`}>
-        <motion.div
-          whileHover={{ x: 4 }}
-          className="bg-white rounded-xl border border-zinc-200 flex gap-4 p-4 
-                   hover:shadow-lg hover:border-zinc-300 transition-all group"
+        <div
+          className="bg-white rounded-xl border border-zinc-200 flex gap-4 p-4
+                   hover:shadow-md hover:border-zinc-300 transition-shadow duration-200 group"
         >
           {/* Image */}
           <div className="w-28 h-28 flex-shrink-0 bg-zinc-100 rounded-lg overflow-hidden p-2 flex items-center justify-center">
@@ -156,7 +154,7 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </Link>
     )
   }
@@ -164,13 +162,11 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
   // Grid view (default)
   return (
     <Link to={`/producto/${product.id}`}>
-      <motion.div
-        whileHover={{ y: -4, scale: 1.01 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      <div
         className="bg-white rounded-xl sm:rounded-2xl overflow-hidden
                  border border-zinc-200 shadow-sm
-                 hover:shadow-xl hover:border-zinc-300
-                 transition-all duration-300 group h-full flex flex-col"
+                 hover:shadow-md hover:border-zinc-300 hover:-translate-y-1
+                 transition-shadow transition-transform duration-200 group h-full flex flex-col"
       >
         {/* Image */}
         <div className="relative aspect-square bg-gradient-to-br from-zinc-100 to-zinc-50 overflow-hidden">
@@ -196,7 +192,7 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
           {/* Badges */}
           <div className="absolute top-2 sm:top-3 left-2 sm:left-3 flex flex-col gap-1">
             {product.is_on_promotion && (
-              <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs sm:text-xs font-bold px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-lg animate-pulse">
+              <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs sm:text-xs font-bold px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
                 🔥 OFERTA
               </span>
             )}
@@ -225,7 +221,7 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
           </div>
 
           {!product.in_stock && (
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
               <span className="bg-white/90 text-maldonado-dark font-bold px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm">
                 SIN STOCK
               </span>
@@ -330,7 +326,7 @@ const ProductCard = memo(function ProductCard({ product, onQuoteRequest, viewMod
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
     </Link>
   )
 })
