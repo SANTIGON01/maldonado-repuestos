@@ -513,6 +513,7 @@ export default function Hero({ onQuoteClick }) {
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.5 }}
             drag={totalSlides > 1 ? "x" : false}
+            dragDirectionLock
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.2}
             onDragEnd={(e, { offset, velocity }) => {

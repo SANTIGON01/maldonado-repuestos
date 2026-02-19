@@ -31,6 +31,7 @@ export default function QuoteCartSidebar({ isOpen, onClose, onRequestQuote }) {
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             drag="x"
+            dragDirectionLock
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.2}
             onDragEnd={(e, { offset }) => {

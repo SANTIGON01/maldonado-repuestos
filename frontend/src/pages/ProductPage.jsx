@@ -465,6 +465,7 @@ export default function ProductPage({ onQuoteRequest, onLoginClick }) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               drag={images.length > 1 ? "x" : false}
+              dragDirectionLock
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.2}
               onDragEnd={(e, { offset }) => {

@@ -9,9 +9,15 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     /* Escala global al 90% - vista más compacta pero legible */
     font-size: 14.5px;
+  }
+
+  /* smooth scroll solo en desktop — en iOS causa conflictos con touch scroll */
+  @media (min-width: 640px) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
   
   /* En móvil, font-size base de 16px para legibilidad */
