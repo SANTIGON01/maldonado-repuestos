@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigationType } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
@@ -33,8 +33,9 @@ function App() {
   const [quoteProduct, setQuoteProduct] = useState(null)
   
   const location = useLocation()
+  const navigationType = useNavigationType()
   const checkAuth = useAuthStore((state) => state.checkAuth)
-  
+
   // Check if we're on admin page to hide header/footer
   const isAdminPage = location.pathname.startsWith('/admin')
 
@@ -43,10 +44,12 @@ function App() {
     checkAuth()
   }, [checkAuth])
 
-  // Scroll to top on route change
+  // Scroll to top solo en navegación hacia adelante (PUSH), no al volver (POP)
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [location.pathname])
+    if (navigationType !== 'POP') {
+      window.scrollTo(0, 0)
+    }
+  }, [location.pathname, navigationType])
 
   // Abrir carrito de cotización (NO requiere login)
   const handleCartClick = () => {

@@ -1,8 +1,8 @@
 /**
  * Página de Catálogo - Lista de productos con filtros
  */
-import { useState, useEffect, useMemo } from 'react'
-import { useParams, useSearchParams, Link } from 'react-router-dom'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { useParams, useSearchParams, Link, useNavigationType } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
   Filter, X, ChevronDown, Grid3X3, List, 
@@ -25,7 +25,9 @@ const SORT_OPTIONS = [
 export default function CatalogPage({ onQuoteRequest }) {
   const { categorySlug } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
-  
+  const navigationType = useNavigationType()
+  const hasRestoredScroll = useRef(false)
+
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [currentCategory, setCurrentCategory] = useState(null)
@@ -147,8 +149,37 @@ export default function CatalogPage({ onQuoteRequest }) {
     setPage(1)
   }, [categorySlug, sortBy, inStockOnly, selectedBrand, searchTerm, showOnPromotion, productCodes])
 
-  // Scroll al inicio cuando cambia la página (importante para móviles)
+  // Guardar posición de scroll al salir del catálogo
   useEffect(() => {
+    const saveScroll = () => {
+      sessionStorage.setItem('catalog_scroll', String(window.scrollY))
+    }
+    // Guardar en cada scroll (throttled por el browser)
+    window.addEventListener('scroll', saveScroll, { passive: true })
+    return () => window.removeEventListener('scroll', saveScroll)
+  }, [])
+
+  // Restaurar scroll al volver con botón atrás (después de que carguen los productos)
+  useEffect(() => {
+    if (navigationType === 'POP' && !isLoading && products.length > 0 && !hasRestoredScroll.current) {
+      const saved = sessionStorage.getItem('catalog_scroll')
+      if (saved) {
+        hasRestoredScroll.current = true
+        // Usar requestAnimationFrame para esperar al render del DOM
+        requestAnimationFrame(() => {
+          window.scrollTo(0, parseInt(saved, 10))
+        })
+      }
+    }
+  }, [navigationType, isLoading, products])
+
+  // Scroll al inicio cuando cambia la página manualmente (paginación)
+  const isFirstRender = useRef(true)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [page])
 
