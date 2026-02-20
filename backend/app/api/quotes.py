@@ -48,8 +48,8 @@ async def create_quote(
     )
     db.add(quote)
     await db.commit()
-    await db.refresh(quote)
-    
+    await db.refresh(quote, attribute_names=["items"])
+
     # Send emails in background
     background_tasks.add_task(
         email_service.send_quote_notification, 

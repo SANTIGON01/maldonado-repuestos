@@ -1,5 +1,7 @@
+import { memo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Phone, Mail, MessageCircle, MapPin, Clock, Send, ArrowUpRight } from 'lucide-react'
+import { Phone, Mail, MessageCircle, MapPin, Clock, Send, ArrowUpRight, CheckCircle, Loader2 } from 'lucide-react'
+import api from '../lib/api'
 
 // Información de contacto del negocio - Maipú, Mendoza
 const PHONE_NUMBER = '0261 15-454-4128'
@@ -37,7 +39,37 @@ const contactInfo = [
   },
 ]
 
-export default function CallToAction({ onQuoteClick }) {
+export default memo(function CallToAction({ onQuoteClick }) {
+  const [formData, setFormData] = useState({
+    name: '', phone: '', email: '', vehicle_info: '', message: ''
+  })
+  const [status, setStatus] = useState('idle') // idle | loading | success | error
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setStatus('loading')
+    setErrorMsg('')
+    try {
+      await api.createQuote({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        vehicle_info: formData.vehicle_info || null,
+        message: formData.message,
+      })
+      setStatus('success')
+      setFormData({ name: '', phone: '', email: '', vehicle_info: '', message: '' })
+    } catch (err) {
+      setStatus('error')
+      setErrorMsg(err.message || 'Error al enviar la consulta')
+    }
+  }
+
   return (
     <section id="contacto" className="py-12 sm:py-24 bg-white relative overflow-hidden">
       {/* Background elements - oculto en móvil */}
@@ -140,12 +172,33 @@ export default function CallToAction({ onQuoteClick }) {
               Respondemos en menos de 24 horas hábiles
             </p>
 
-            <form className="space-y-3 sm:space-y-4">
+            {status === 'success' ? (
+              <div className="flex flex-col items-center justify-center py-10 text-center">
+                <CheckCircle className="w-16 h-16 text-green-400 mb-4" />
+                <h4 className="font-heading text-xl text-white mb-2">CONSULTA ENVIADA</h4>
+                <p className="text-white/60 text-sm mb-6">
+                  Recibimos tu consulta. Te responderemos a la brevedad.
+                </p>
+                <button
+                  onClick={() => setStatus('idle')}
+                  className="px-6 py-2 border-2 border-white/20 text-white font-mono text-sm
+                           rounded-lg hover:border-white/40 transition-colors"
+                >
+                  ENVIAR OTRA CONSULTA
+                </button>
+              </div>
+            ) : (
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="font-mono text-[10px] sm:text-xs text-white/60 mb-1.5 sm:mb-2 block">NOMBRE *</label>
                   <input
                     type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    minLength={2}
                     placeholder="Tu nombre"
                     className="w-full bg-white/5 border-2 border-white/10 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-none
                              text-white placeholder:text-white/30 font-body text-sm sm:text-base
@@ -156,6 +209,11 @@ export default function CallToAction({ onQuoteClick }) {
                   <label className="font-mono text-[10px] sm:text-xs text-white/60 mb-1.5 sm:mb-2 block">TELÉFONO *</label>
                   <input
                     type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    minLength={8}
                     placeholder="Ej: 0261 15-123-4567"
                     className="w-full bg-white/5 border-2 border-white/10 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-none
                              text-white placeholder:text-white/30 font-body text-sm sm:text-base
@@ -168,6 +226,10 @@ export default function CallToAction({ onQuoteClick }) {
                 <label className="font-mono text-[10px] sm:text-xs text-white/60 mb-1.5 sm:mb-2 block">EMAIL *</label>
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
                   placeholder="tu@email.com"
                   className="w-full bg-white/5 border-2 border-white/10 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-none
                            text-white placeholder:text-white/30 font-body text-sm sm:text-base
@@ -179,6 +241,9 @@ export default function CallToAction({ onQuoteClick }) {
                 <label className="font-mono text-[10px] sm:text-xs text-white/60 mb-1.5 sm:mb-2 block">SEMIRREMOLQUE</label>
                 <input
                   type="text"
+                  name="vehicle_info"
+                  value={formData.vehicle_info}
+                  onChange={handleChange}
                   placeholder="Marca, modelo, año..."
                   className="w-full bg-white/5 border-2 border-white/10 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-none
                            text-white placeholder:text-white/30 font-body text-sm sm:text-base
@@ -189,6 +254,11 @@ export default function CallToAction({ onQuoteClick }) {
               <div>
                 <label className="font-mono text-[10px] sm:text-xs text-white/60 mb-1.5 sm:mb-2 block">¿QUÉ REPUESTO NECESITÁS? *</label>
                 <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  minLength={10}
                   rows={3}
                   placeholder="Describí el repuesto que buscás..."
                   className="w-full bg-white/5 border-2 border-white/10 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-none
@@ -197,17 +267,27 @@ export default function CallToAction({ onQuoteClick }) {
                 />
               </div>
 
+              {status === 'error' && (
+                <p className="text-red-400 text-sm font-body">{errorMsg}</p>
+              )}
+
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 sm:gap-3 
+                disabled={status === 'loading'}
+                className="w-full flex items-center justify-center gap-2 sm:gap-3
                          bg-maldonado-red-700 text-white font-heading py-3 sm:py-4 rounded-xl sm:rounded-none
                          border-2 border-maldonado-red-600 text-sm sm:text-base
-                         hover:bg-maldonado-red-800 transition-colors"
+                         hover:bg-maldonado-red-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
-                <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-                ENVIAR CONSULTA
+                {status === 'loading' ? (
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                )}
+                {status === 'loading' ? 'ENVIANDO...' : 'ENVIAR CONSULTA'}
               </button>
             </form>
+            )}
           </motion.div>
         </div>
 
@@ -245,4 +325,4 @@ export default function CallToAction({ onQuoteClick }) {
       </div>
     </section>
   )
-}
+})

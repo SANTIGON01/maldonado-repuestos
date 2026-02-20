@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import { motion } from 'framer-motion'
 import { Truck, Clock, Headphones, Award, MessageCircle, Wrench, Package, Users } from 'lucide-react'
 
@@ -68,7 +68,7 @@ const brands = [
   { name: 'FESTO', logo_url: '/brands/festo.png' },
 ]
 
-export default function Features() {
+export default memo(function Features() {
   return (
     <section id="nosotros" className="relative overflow-hidden">
       {/* Features section - Diseño moderno */}
@@ -273,4 +273,4 @@ export default function Features() {
       </div>
     </section>
   )
-}
+})
