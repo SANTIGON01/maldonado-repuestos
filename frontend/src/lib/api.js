@@ -133,7 +133,7 @@ class ApiClient {
     clearCache('category_')
   }
 
-  // Products
+  // Products (con cache para reducir llamadas repetidas)
   async getProducts(params = {}) {
     const searchParams = new URLSearchParams()
     Object.entries(params).forEach(([key, value]) => {
@@ -141,7 +141,13 @@ class ApiClient {
         searchParams.append(key, value)
       }
     })
-    return this.request(`/products?${searchParams}`)
+    const queryString = searchParams.toString()
+    const cacheKey = `products_${queryString}`
+    return cachedFetch(
+      cacheKey,
+      () => this.request(`/products?${queryString}`),
+      'products'
+    )
   }
 
   async searchProducts(query, page = 1, pageSize = 12, params = {}) {
@@ -158,7 +164,13 @@ class ApiClient {
       }
     })
 
-    return this.request(`/products/search?${searchParams}`)
+    const queryString = searchParams.toString()
+    const cacheKey = `search_${queryString}`
+    return cachedFetch(
+      cacheKey,
+      () => this.request(`/products/search?${queryString}`),
+      'search'
+    )
   }
 
   async getProduct(id) {

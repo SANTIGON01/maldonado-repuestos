@@ -2,9 +2,10 @@
  * Skeleton loader para ProductCard
  * Muestra una versión animada mientras cargan los productos
  */
+import { memo } from 'react'
 import { motion } from 'framer-motion'
 
-export default function ProductCardSkeleton({ viewMode = 'grid' }) {
+const ProductCardSkeleton = memo(function ProductCardSkeleton({ viewMode = 'grid' }) {
   if (viewMode === 'list') {
     return (
       <div className="bg-white rounded-xl border border-zinc-200 flex gap-4 p-4">
@@ -84,7 +85,9 @@ export default function ProductCardSkeleton({ viewMode = 'grid' }) {
       </div>
     </motion.div>
   )
-}
+})
+
+export default ProductCardSkeleton
 
 // Componente para mostrar múltiples skeletons
 export function ProductGridSkeleton({ count = 8, viewMode = 'grid' }) {

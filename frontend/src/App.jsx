@@ -2,10 +2,6 @@ import { useState, useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import QuoteCartSidebar from './components/QuoteCartSidebar'
-import QuoteWhatsAppModal from './components/QuoteWhatsAppModal'
-import LoginModal from './components/LoginModal'
-import QuoteModal from './components/QuoteModal'
 import WhatsAppButton from './components/WhatsAppButton'
 
 // Pages - Lazy loaded para mejor performance
@@ -13,6 +9,12 @@ const HomePage = lazy(() => import('./pages/HomePage'))
 const CatalogPage = lazy(() => import('./pages/CatalogPage'))
 const ProductPage = lazy(() => import('./pages/ProductPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
+
+// Modals - Lazy loaded (solo se cargan cuando el usuario los abre)
+const QuoteCartSidebar = lazy(() => import('./components/QuoteCartSidebar'))
+const QuoteWhatsAppModal = lazy(() => import('./components/QuoteWhatsAppModal'))
+const LoginModal = lazy(() => import('./components/LoginModal'))
+const QuoteModal = lazy(() => import('./components/QuoteModal'))
 
 // Loading fallback minimalista
 const PageLoader = () => (
@@ -112,28 +114,38 @@ function App() {
       {/* Botón flotante de WhatsApp */}
       <WhatsAppButton />
 
-      {/* Modals & Sidebars */}
-      <QuoteCartSidebar 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)}
-        onRequestQuote={handleRequestQuote}
-      />
-      <QuoteWhatsAppModal
-        isOpen={isQuoteWhatsAppOpen}
-        onClose={() => setIsQuoteWhatsAppOpen(false)}
-      />
-      <LoginModal 
-        isOpen={isLoginOpen} 
-        onClose={() => setIsLoginOpen(false)} 
-      />
-      <QuoteModal 
-        isOpen={isQuoteOpen} 
-        onClose={() => {
-          setIsQuoteOpen(false)
-          setQuoteProduct(null)
-        }}
-        product={quoteProduct}
-      />
+      {/* Modals & Sidebars - Lazy loaded, solo se cargan cuando se abren */}
+      <Suspense fallback={null}>
+        {isCartOpen && (
+          <QuoteCartSidebar
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
+            onRequestQuote={handleRequestQuote}
+          />
+        )}
+        {isQuoteWhatsAppOpen && (
+          <QuoteWhatsAppModal
+            isOpen={isQuoteWhatsAppOpen}
+            onClose={() => setIsQuoteWhatsAppOpen(false)}
+          />
+        )}
+        {isLoginOpen && (
+          <LoginModal
+            isOpen={isLoginOpen}
+            onClose={() => setIsLoginOpen(false)}
+          />
+        )}
+        {isQuoteOpen && (
+          <QuoteModal
+            isOpen={isQuoteOpen}
+            onClose={() => {
+              setIsQuoteOpen(false)
+              setQuoteProduct(null)
+            }}
+            product={quoteProduct}
+          />
+        )}
+      </Suspense>
     </div>
   )
 }

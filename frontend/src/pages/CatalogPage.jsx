@@ -398,19 +398,12 @@ export default function CatalogPage({ onQuoteRequest }) {
                 : 'grid-cols-1'
             }`}>
               {products.map((product) => (
-                <motion.div
+                <ProductCard
                   key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <ProductCard
-                    product={product}
-                    onQuoteRequest={onQuoteRequest}
-                    viewMode={viewMode}
-                  />
-                </motion.div>
+                  product={product}
+                  onQuoteRequest={onQuoteRequest}
+                  viewMode={viewMode}
+                />
               ))}
             </div>
 

@@ -102,7 +102,7 @@ class EmailService:
         """
         
         return await self.send_email(
-            to_email=self.user,  # Send to admin
+            to_email=settings.NOTIFICATION_EMAIL or self.user,
             subject=subject,
             html_content=html_content,
         )

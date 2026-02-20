@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     SMTP_PORT: int = 587
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
+    NOTIFICATION_EMAIL: str = "repuestos@maldonadosaci.com"
     
     # Railway Database (solo para backups, no usado por la app)
     RAILWAY_DATABASE_URL: str = ""

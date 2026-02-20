@@ -10,6 +10,8 @@ const TTL = {
   categories: 5 * 60 * 1000,    // 5 minutos
   banners: 2 * 60 * 1000,       // 2 minutos
   product: 1 * 60 * 1000,       // 1 minuto
+  products: 30 * 1000,          // 30 segundos - listados de productos
+  search: 15 * 1000,            // 15 segundos - resultados de búsqueda
   default: 30 * 1000,           // 30 segundos
 }
 

@@ -102,8 +102,8 @@ export default function WhatsAppButton() {
                  hover:shadow-xl hover:shadow-green-500/50 transition-all duration-300
                  p-4"
       >
-        {/* Pulse animation */}
-        <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-20" />
+        {/* Ring indicator */}
+        <span className="absolute inset-0 rounded-full ring-2 ring-green-400/30" />
 
         <WhatsAppIcon className="w-7 h-7 relative z-10" />
 

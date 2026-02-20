@@ -83,7 +83,7 @@ function IntroSlide() {
           <div className="relative mx-auto max-w-xs">
             {/* Logo container móvil */}
             <div className="relative bg-gradient-to-br from-maldonado-dark-light/50 to-maldonado-dark/50 
-                          p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
+                          p-4 rounded-2xl border border-white/10 sm:backdrop-blur-sm">
               <img 
                 src="/unnamed.jpg" 
                 alt="Maldonado Repuestos"
@@ -99,15 +99,15 @@ function IntroSlide() {
 
             {/* Mini cards en móvil */}
             <div className="flex justify-center gap-2 mt-3">
-              <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
+              <div className="flex items-center gap-1.5 bg-white/10 sm:backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
                 <Truck className="w-3 h-3 text-maldonado-red-500" />
                 <span className="text-xs text-white font-mono">ENVÍOS</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
+              <div className="flex items-center gap-1.5 bg-white/10 sm:backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
                 <Shield className="w-3 h-3 text-maldonado-red-500" />
                 <span className="text-xs text-white font-mono">GARANTÍA</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
+              <div className="flex items-center gap-1.5 bg-white/10 sm:backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/20">
                 <Wrench className="w-3 h-3 text-maldonado-red-500" />
                 <span className="text-xs text-white font-mono">EXPERTOS</span>
               </div>
@@ -233,7 +233,7 @@ function PromoSlide({ banner }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white
+          <span className="inline-flex items-center gap-2 bg-white/10 sm:backdrop-blur-sm text-white
                        px-3 sm:px-4 py-1.5 sm:py-2 font-mono text-xs uppercase tracking-wider border border-white/20 rounded-full">
             <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
             {banner.banner_type === 'promo' ? 'PROMOCIÓN' : 
@@ -513,6 +513,7 @@ export default function Hero({ onQuoteClick }) {
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.5 }}
             drag={totalSlides > 1 ? "x" : false}
+            dragDirectionLock
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.2}
             onDragEnd={(e, { offset, velocity }) => {
@@ -538,7 +539,7 @@ export default function Hero({ onQuoteClick }) {
           <button
             onClick={prevSlide}
             className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20
-                     bg-white/10 hover:bg-white/20 backdrop-blur-sm
+                     bg-white/10 hover:bg-white/20 sm:backdrop-blur-sm
                      p-2 sm:p-3 rounded-full transition-all border border-white/20
                      hover:scale-110 flex items-center justify-center touch-target"
             aria-label="Slide anterior"
@@ -549,7 +550,7 @@ export default function Hero({ onQuoteClick }) {
           <button
             onClick={nextSlide}
             className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20
-                     bg-white/10 hover:bg-white/20 backdrop-blur-sm
+                     bg-white/10 hover:bg-white/20 sm:backdrop-blur-sm
                      p-2 sm:p-3 rounded-full transition-all border border-white/20
                      hover:scale-110 flex items-center justify-center touch-target"
             aria-label="Siguiente slide"
