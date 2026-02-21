@@ -1,8 +1,8 @@
 /**
  * Página de Catálogo - Lista de productos con filtros
  */
-import { useState, useEffect, useMemo } from 'react'
-import { useParams, useSearchParams, Link } from 'react-router-dom'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { useParams, useSearchParams, Link, useNavigationType } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
   Filter, X, ChevronDown, Grid3X3, List, 
@@ -25,37 +25,57 @@ const SORT_OPTIONS = [
 export default function CatalogPage({ onQuoteRequest }) {
   const { categorySlug } = useParams()
   const [searchParams, setSearchParams] = useSearchParams()
-  
+  const navigationType = useNavigationType()
+  const hasRestoredScroll = useRef(false)
+
+  // Estado derivado de la URL — el browser history preserva estos valores al volver
+  const page = Number(searchParams.get('page')) || 1
+  const sortBy = searchParams.get('sort') || 'created_at:desc'
+  const searchTerm = searchParams.get('search') || ''
+  const selectedBrand = searchParams.get('brand') || ''
+  const inStockOnly = searchParams.get('in_stock') === 'true'
+  const showOnPromotion = searchParams.get('on_promotion') === 'true'
+  const productCodes = searchParams.get('codes') || ''
+
+  // Helper para actualizar searchParams sin perder los existentes
+  const updateParams = (updates) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev)
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value === '' || value === false || value === null || value === undefined) {
+          next.delete(key)
+        } else {
+          next.set(key, String(value))
+        }
+      })
+      return next
+    }, { replace: true })
+  }
+
+  // Setters que actualizan la URL (reemplazan a los useState individuales)
+  const setPage = (p) => {
+    const newPage = typeof p === 'function' ? p(page) : p
+    updateParams({ page: newPage <= 1 ? '' : newPage })
+  }
+  const setSortBy = (v) => updateParams({ sort: v === 'created_at:desc' ? '' : v, page: '' })
+  const setSearchTerm = (v) => updateParams({ search: v, page: '' })
+  const setSelectedBrand = (v) => updateParams({ brand: v, page: '' })
+  const setInStockOnly = (v) => updateParams({ in_stock: v ? 'true' : '', page: '' })
+  const setShowOnPromotion = (v) => updateParams({ on_promotion: v ? 'true' : '', page: '' })
+  const setProductCodes = (v) => updateParams({ codes: v, page: '' })
+
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [currentCategory, setCurrentCategory] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [totalProducts, setTotalProducts] = useState(0)
-  const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  
-  // Filters
+
+  // Filters panel
   const [showFilters, setShowFilters] = useState(false)
-  const [sortBy, setSortBy] = useState('created_at:desc')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedBrand, setSelectedBrand] = useState('')
-  const [inStockOnly, setInStockOnly] = useState(false)
-  const [showOnPromotion, setShowOnPromotion] = useState(false)
-  const [productCodes, setProductCodes] = useState('')
-  
+
   // View mode
   const [viewMode, setViewMode] = useState('grid')
-
-  // Leer parámetros de la URL
-  useEffect(() => {
-    const searchFromUrl = searchParams.get('search')
-    const codesFromUrl = searchParams.get('codes')
-    const onPromotionFromUrl = searchParams.get('on_promotion')
-
-    if (searchFromUrl) setSearchTerm(searchFromUrl)
-    if (codesFromUrl) setProductCodes(codesFromUrl)
-    if (onPromotionFromUrl === 'true') setShowOnPromotion(true)
-  }, [searchParams])
 
   // Fetch categories
   useEffect(() => {
@@ -83,52 +103,37 @@ export default function CatalogPage({ onQuoteRequest }) {
       setIsLoading(true)
       try {
         const [sortField, sortOrder] = sortBy.split(':')
-        
+
         const params = {
           page,
           page_size: 12,
           sort_by: sortField,
           sort_order: sortOrder,
         }
-        
-        if (categorySlug) {
-          params.category_slug = categorySlug
-        }
-        
-        if (inStockOnly) {
-          params.in_stock = true
-        }
-        
-        if (selectedBrand) {
-          params.brand = selectedBrand
-        }
 
-        if (showOnPromotion) {
-          params.on_promotion = true
-        }
-
-        if (productCodes) {
-          params.codes = productCodes
-        }
+        if (categorySlug) params.category_slug = categorySlug
+        if (inStockOnly) params.in_stock = true
+        if (selectedBrand) params.brand = selectedBrand
+        if (showOnPromotion) params.on_promotion = true
+        if (productCodes) params.codes = productCodes
 
         let data
         if (searchTerm.length >= 2) {
-          // Pasar filtros también a la búsqueda
-          const searchParams = {
+          const fetchParams = {
             sort_by: sortField,
             sort_order: sortOrder,
           }
-          if (categorySlug) searchParams.category_slug = categorySlug
-          if (inStockOnly) searchParams.in_stock = true
-          if (selectedBrand) searchParams.brand = selectedBrand
-          if (showOnPromotion) searchParams.on_promotion = true
-          if (productCodes) searchParams.codes = productCodes
+          if (categorySlug) fetchParams.category_slug = categorySlug
+          if (inStockOnly) fetchParams.in_stock = true
+          if (selectedBrand) fetchParams.brand = selectedBrand
+          if (showOnPromotion) fetchParams.on_promotion = true
+          if (productCodes) fetchParams.codes = productCodes
 
-          data = await api.searchProducts(searchTerm, page, 12, searchParams)
+          data = await api.searchProducts(searchTerm, page, 12, fetchParams)
         } else {
           data = await api.getProducts(params)
         }
-        
+
         setProducts(data.items)
         setTotalProducts(data.total)
         setTotalPages(data.total_pages)
@@ -138,19 +143,31 @@ export default function CatalogPage({ onQuoteRequest }) {
         setIsLoading(false)
       }
     }
-    
+
     fetchProducts()
   }, [categorySlug, page, sortBy, inStockOnly, selectedBrand, searchTerm, showOnPromotion, productCodes])
 
-  // Reset page cuando cambian los filtros
+  // Guardar posición de scroll continuamente
   useEffect(() => {
-    setPage(1)
-  }, [categorySlug, sortBy, inStockOnly, selectedBrand, searchTerm, showOnPromotion, productCodes])
+    const saveScroll = () => {
+      sessionStorage.setItem('catalog_scroll', String(window.scrollY))
+    }
+    window.addEventListener('scroll', saveScroll, { passive: true })
+    return () => window.removeEventListener('scroll', saveScroll)
+  }, [])
 
-  // Scroll al inicio cuando cambia la página (importante para móviles)
+  // Restaurar scroll al volver con botón atrás (después de que carguen los productos)
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [page])
+    if (navigationType === 'POP' && !isLoading && products.length > 0 && !hasRestoredScroll.current) {
+      const saved = sessionStorage.getItem('catalog_scroll')
+      if (saved) {
+        hasRestoredScroll.current = true
+        requestAnimationFrame(() => {
+          window.scrollTo(0, parseInt(saved, 10))
+        })
+      }
+    }
+  }, [navigationType, isLoading, products])
 
   // Get unique brands from products (memoizado)
   const brands = useMemo(() => [...new Set(products.map(p => p.brand))].sort(), [products])
@@ -353,11 +370,7 @@ export default function CatalogPage({ onQuoteRequest }) {
                 {/* Clear Filters */}
                 <button
                   onClick={() => {
-                    setSelectedBrand('')
-                    setInStockOnly(false)
-                    setSearchTerm('')
-                    setShowOnPromotion(false)
-                    setProductCodes('')
+                    setSearchParams({}, { replace: true })
                   }}
                   className="flex items-center gap-1 text-maldonado-red hover:underline font-heading text-xs sm:text-sm"
                 >
@@ -411,7 +424,10 @@ export default function CatalogPage({ onQuoteRequest }) {
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-2 mt-6 sm:mt-8">
                 <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  onClick={() => {
+                    setPage(p => Math.max(1, p - 1))
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }}
                   disabled={page === 1}
                   className="px-3 sm:px-4 py-2.5 border-2 border-maldonado-dark font-heading text-xs sm:text-sm rounded-lg sm:rounded-none
                            disabled:opacity-50 disabled:cursor-not-allowed
@@ -426,7 +442,10 @@ export default function CatalogPage({ onQuoteRequest }) {
                 </span>
 
                 <button
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  onClick={() => {
+                    setPage(p => Math.min(totalPages, p + 1))
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }}
                   disabled={page === totalPages}
                   className="px-3 sm:px-4 py-2.5 border-2 border-maldonado-dark font-heading text-xs sm:text-sm rounded-lg sm:rounded-none
                            disabled:opacity-50 disabled:cursor-not-allowed
