@@ -91,6 +91,8 @@ _origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:5173",  # Vite default port
+    "https://maldonadorepuestos.com",
+    "https://www.maldonadorepuestos.com",
 ]
 # Filtrar duplicados y valores vacios
 origins = list(set(filter(None, _origins)))
@@ -100,7 +102,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
 )
