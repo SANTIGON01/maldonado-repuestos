@@ -283,13 +283,25 @@ function PromoSlide({ banner }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <Link
-              to={getBannerLink(banner)}
-              className="btn-brutal group inline-flex text-center justify-center"
-            >
-              {banner.button_text}
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            {banner.button_link.startsWith('http') ? (
+              <a
+                href={banner.button_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-brutal group inline-flex text-center justify-center"
+              >
+                {banner.button_text}
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </a>
+            ) : (
+              <Link
+                to={getBannerLink(banner)}
+                className="btn-brutal group inline-flex text-center justify-center"
+              >
+                {banner.button_text}
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            )}
           </motion.div>
         )}
 
@@ -303,11 +315,11 @@ function PromoSlide({ banner }) {
           >
             <div className={`relative mx-auto max-w-[320px] aspect-[4/3] rounded-2xl ${bgClass} 
                           border border-white/20 overflow-hidden shadow-xl`}>
-              <div className="absolute inset-0 flex items-center justify-center p-3">
+              <div className="absolute inset-0">
                 <img
                   src={optimizeImage(banner.image_url, 'cardGrid')}
                   alt={banner.title}
-                  className="w-full h-full object-contain drop-shadow-xl"
+                  className="w-full h-full object-cover"
                 />
               </div>
               {/* Badge de tipo */}
@@ -357,11 +369,11 @@ function PromoSlide({ banner }) {
           {banner.image_url ? (
             <>
               {/* Imagen del producto - MÁS GRANDE */}
-              <div className="absolute inset-0 flex items-center justify-center p-6">
+              <div className="absolute inset-0">
                 <motion.img
                   src={optimizeImage(banner.image_url, 'heroBanner')}
                   alt={banner.title}
-                  className="w-full h-full object-contain drop-shadow-2xl"
+                  className="w-full h-full object-cover"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5 }}
