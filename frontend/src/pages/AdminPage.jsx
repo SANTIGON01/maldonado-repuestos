@@ -1337,14 +1337,18 @@ function BannerForm({ banner, onSave, onCancel }) {
     description: banner?.description || '',
     image_url: banner?.image_url || '',
     brand: banner?.brand || '',
-    button_text: banner?.button_text || 'VER MÁS',
-    button_link: banner?.button_link || '/catalogo',
+    button_text: banner?.button_text || '',
+    button_link: banner?.button_link || '',
     product_codes: banner?.product_codes || '',
     banner_type: banner?.banner_type || 'promo',
     bg_color: banner?.bg_color || 'gradient-red',
     order: banner?.order || 0,
     is_active: banner?.is_active ?? true,
   })
+
+  const [showButton, setShowButton] = useState(
+    !!(banner?.button_text && banner?.button_link)
+  )
 
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
@@ -1400,11 +1404,20 @@ function BannerForm({ banner, onSave, onCancel }) {
     }
   }
 
+  const handleToggleButton = (checked) => {
+    setShowButton(checked)
+    if (checked && !formData.button_text && !formData.button_link) {
+      setFormData((prev) => ({ ...prev, button_text: 'VER MÁS', button_link: '/catalogo' }))
+    }
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     onSave({
       ...formData,
       order: parseInt(formData.order) || 0,
+      button_text: showButton ? formData.button_text : '',
+      button_link: showButton ? formData.button_link : '',
     })
   }
 
@@ -1569,29 +1582,46 @@ function BannerForm({ banner, onSave, onCancel }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block font-heading text-sm mb-1">TEXTO DEL BOTÓN</label>
+        <div className="space-y-3">
+          <label className="flex items-center gap-2 cursor-pointer">
             <input
-              type="text"
-              name="button_text"
-              value={formData.button_text}
-              onChange={handleChange}
-              className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
-              placeholder="VER MÁS"
+              type="checkbox"
+              checked={showButton}
+              onChange={(e) => handleToggleButton(e.target.checked)}
+              className="w-5 h-5 accent-maldonado-red"
             />
-          </div>
-          <div>
-            <label className="block font-heading text-sm mb-1">ENLACE DEL BOTÓN</label>
-            <input
-              type="text"
-              name="button_link"
-              value={formData.button_link}
-              onChange={handleChange}
-              className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
-              placeholder="/catalogo"
-            />
-          </div>
+            <span className="font-heading text-sm">MOSTRAR BOTÓN EN EL BANNER</span>
+          </label>
+
+          {showButton && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block font-heading text-sm mb-1">TEXTO DEL BOTÓN</label>
+                <input
+                  type="text"
+                  name="button_text"
+                  value={formData.button_text}
+                  onChange={handleChange}
+                  className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
+                  placeholder="VER MÁS"
+                />
+              </div>
+              <div>
+                <label className="block font-heading text-sm mb-1">ENLACE DEL BOTÓN</label>
+                <input
+                  type="text"
+                  name="button_link"
+                  value={formData.button_link}
+                  onChange={handleChange}
+                  className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
+                  placeholder="/catalogo o https://tiktok.com/..."
+                />
+                <p className="text-xs text-maldonado-chrome mt-1">
+                  Ruta interna (/catalogo) o URL externa (https://...)
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="col-span-2">
