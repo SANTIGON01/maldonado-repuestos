@@ -313,13 +313,13 @@ function PromoSlide({ banner }) {
             transition={{ delay: 0.4, duration: 0.5 }}
             className="lg:hidden mt-4"
           >
-            <div className={`relative mx-auto max-w-[320px] aspect-[4/3] rounded-2xl ${bgClass} 
+            <div className={`relative mx-auto max-w-[360px] aspect-[3/2] rounded-2xl ${bgClass}
                           border border-white/20 overflow-hidden shadow-xl`}>
               <div className="absolute inset-0">
                 <img
                   src={optimizeImage(banner.image_url, 'cardGrid')}
                   alt={banner.title}
-                  className="w-full h-full object-cover"
+                  className={`w-full h-full object-${banner.image_fit || 'cover'}`}
                 />
               </div>
               {/* Badge de tipo */}
@@ -361,8 +361,8 @@ function PromoSlide({ banner }) {
         transition={{ delay: 0.3, duration: 0.6 }}
         className="relative hidden lg:flex items-center justify-center"
       >
-        {/* Container de imagen/visual - MÁS GRANDE */}
-        <div className={`relative w-full max-w-xl xl:max-w-2xl aspect-[4/3] rounded-3xl ${bgClass} 
+        {/* Container de imagen/visual */}
+        <div className={`relative w-full max-w-2xl xl:max-w-3xl aspect-[3/2] rounded-3xl ${bgClass}
                       border-2 border-white/10 overflow-hidden shadow-2xl`}>
           
           {/* Si hay imagen del producto, mostrarla */}
@@ -373,7 +373,7 @@ function PromoSlide({ banner }) {
                 <motion.img
                   src={optimizeImage(banner.image_url, 'heroBanner')}
                   alt={banner.title}
-                  className="w-full h-full object-cover"
+                  className={`w-full h-full object-${banner.image_fit || 'cover'}`}
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5 }}

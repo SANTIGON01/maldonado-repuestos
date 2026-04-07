@@ -33,6 +33,9 @@ class Banner(Base):
     # Tipo: 'promo', 'news', 'product', 'general'
     banner_type: Mapped[str] = mapped_column(String(20), default='promo')
     
+    # Ajuste de imagen: 'cover' (recorta para llenar) o 'contain' (muestra completa)
+    image_fit: Mapped[str] = mapped_column(String(20), default='cover', server_default='cover')
+
     # Estilo/Color del banner
     bg_color: Mapped[str | None] = mapped_column(String(50), nullable=True)  # ej: 'red', 'dark', 'gradient-red'
     
