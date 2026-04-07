@@ -1340,7 +1340,6 @@ function BannerForm({ banner, onSave, onCancel }) {
     button_text: banner?.button_text || '',
     button_link: banner?.button_link || '',
     product_codes: banner?.product_codes || '',
-    image_fit: banner?.image_fit || 'cover',
     banner_type: banner?.banner_type || 'promo',
     bg_color: banner?.bg_color || 'gradient-red',
     order: banner?.order || 0,
@@ -1563,40 +1562,6 @@ function BannerForm({ banner, onSave, onCancel }) {
             Podés subir una imagen desde tu dispositivo o pegar la URL de una imagen existente.
           </p>
 
-          {/* Ajuste de imagen */}
-          <div>
-            <label className="block font-heading text-sm mb-2">AJUSTE DE IMAGEN EN EL BANNER</label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setFormData((prev) => ({ ...prev, image_fit: 'cover' }))}
-                className={`px-4 py-3 text-sm border-2 transition-all text-center ${
-                  formData.image_fit === 'cover'
-                    ? 'border-maldonado-red bg-maldonado-red/10 font-bold'
-                    : 'border-maldonado-light-gray hover:border-maldonado-dark'
-                }`}
-              >
-                <span className="block text-base">📐 Cover</span>
-                <span className="block text-xs text-maldonado-chrome mt-1">
-                  Rellena el espacio (recorta si es necesario)
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormData((prev) => ({ ...prev, image_fit: 'contain' }))}
-                className={`px-4 py-3 text-sm border-2 transition-all text-center ${
-                  formData.image_fit === 'contain'
-                    ? 'border-maldonado-red bg-maldonado-red/10 font-bold'
-                    : 'border-maldonado-light-gray hover:border-maldonado-dark'
-                }`}
-              >
-                <span className="block text-base">🖼️ Contain</span>
-                <span className="block text-xs text-maldonado-chrome mt-1">
-                  Muestra la imagen completa (ideal para logos/PNG)
-                </span>
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Selector de marca */}

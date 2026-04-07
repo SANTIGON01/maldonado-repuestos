@@ -319,7 +319,7 @@ function PromoSlide({ banner }) {
                 <img
                   src={optimizeImage(banner.image_url, 'cardGrid')}
                   alt={banner.title}
-                  className={`w-full h-full object-${banner.image_fit || 'cover'}`}
+                  className="w-full h-full object-cover"
                 />
               </div>
               {/* Badge de tipo */}
@@ -373,7 +373,7 @@ function PromoSlide({ banner }) {
                 <motion.img
                   src={optimizeImage(banner.image_url, 'heroBanner')}
                   alt={banner.title}
-                  className={`w-full h-full object-${banner.image_fit || 'cover'}`}
+                  className="w-full h-full object-cover"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5 }}

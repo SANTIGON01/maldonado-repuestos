@@ -14,7 +14,6 @@ class BannerBase(BaseModel):
     button_text: str | None = None
     button_link: str | None = None
     product_codes: str | None = None
-    image_fit: str = 'cover'
     banner_type: str = 'promo'
     bg_color: str | None = None
     order: int = 0
@@ -36,7 +35,6 @@ class BannerUpdate(BaseModel):
     button_text: str | None = None
     button_link: str | None = None
     product_codes: str | None = None
-    image_fit: str | None = None
     banner_type: str | None = None
     bg_color: str | None = None
     order: int | None = None
