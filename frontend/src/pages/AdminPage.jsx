@@ -1561,6 +1561,7 @@ function BannerForm({ banner, onSave, onCancel }) {
           <p className="text-xs text-maldonado-chrome">
             Podés subir una imagen desde tu dispositivo o pegar la URL de una imagen existente.
           </p>
+
         </div>
 
         {/* Selector de marca */}
@@ -1594,32 +1595,49 @@ function BannerForm({ banner, onSave, onCancel }) {
           </label>
 
           {showButton && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-heading text-sm mb-1">TEXTO DEL BOTÓN</label>
-                <input
-                  type="text"
-                  name="button_text"
-                  value={formData.button_text}
-                  onChange={handleChange}
-                  className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
-                  placeholder="VER MÁS"
-                />
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-heading text-sm mb-1">TEXTO DEL BOTÓN</label>
+                  <input
+                    type="text"
+                    name="button_text"
+                    value={formData.button_text}
+                    onChange={handleChange}
+                    className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
+                    placeholder="VER MÁS"
+                  />
+                </div>
+                <div>
+                  <label className="block font-heading text-sm mb-1">ENLACE DEL BOTÓN</label>
+                  <input
+                    type="text"
+                    name="button_link"
+                    value={formData.button_link}
+                    onChange={handleChange}
+                    className={`w-full border-2 px-4 py-2 focus:border-maldonado-red outline-none ${
+                      formData.button_link?.startsWith('http')
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-maldonado-dark'
+                    }`}
+                    placeholder="/catalogo"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block font-heading text-sm mb-1">ENLACE DEL BOTÓN</label>
-                <input
-                  type="text"
-                  name="button_link"
-                  value={formData.button_link}
-                  onChange={handleChange}
-                  className="w-full border-2 border-maldonado-dark px-4 py-2 focus:border-maldonado-red outline-none"
-                  placeholder="/catalogo o https://tiktok.com/..."
-                />
-                <p className="text-xs text-maldonado-chrome mt-1">
-                  Ruta interna (/catalogo) o URL externa (https://...)
+              {formData.button_link?.startsWith('http') ? (
+                <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-2 border border-blue-200 rounded">
+                  <span>🔗</span>
+                  <span>Enlace EXTERNO — se abrirá en una nueva pestaña</span>
+                </div>
+              ) : formData.button_link ? (
+                <p className="text-xs text-maldonado-chrome">
+                  Enlace interno del sitio. Para enlazar a un sitio externo, usá una URL completa (https://...)
                 </p>
-              </div>
+              ) : (
+                <p className="text-xs text-maldonado-chrome">
+                  Ingresá una ruta interna (/catalogo) o una URL externa (https://ejemplo.com)
+                </p>
+              )}
             </div>
           )}
         </div>
