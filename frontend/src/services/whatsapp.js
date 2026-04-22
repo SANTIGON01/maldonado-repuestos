@@ -9,43 +9,22 @@
 const WHATSAPP_NUMBER = '542614544128'
 
 /**
- * Genera el mensaje de cotización para WhatsApp
- * Incluye productos con código y cantidad para que el empleado sepa qué cotizar
- * @param {Object} customerData - Datos del cliente
+ * Genera el mensaje de cotización a partir de los items del carrito.
+ * No requiere datos del cliente: WhatsApp ya identifica al remitente por su número.
  * @param {Array} items - Items del carrito
- * @param {number} quoteId - ID de la cotización guardada en la base de datos
  * @returns {string} Mensaje formateado
  */
-export function generateQuoteMessage(customerData, items, quoteId = null) {
-  const { name, phone, vehicle_info, message } = customerData
-  
+export function generateCartQuoteMessage(items) {
   let msg = `Hola, buenos días.\n\n`
-  msg += `Soy *${name}*, solicito cotización de:\n\n`
-  
-  // Lista de productos con código y cantidad
+  msg += `Solicito cotización de:\n\n`
+
   items.forEach((item) => {
     msg += `• *${item.product.name}*\n`
     msg += `  Cód: ${item.product.code} - Cant: ${item.quantity}\n`
   })
-  
-  msg += `\n`
-  
-  if (vehicle_info) {
-    msg += `Vehículo: ${vehicle_info}\n`
-  }
-  
-  msg += `Tel: ${phone}`
-  
-  if (quoteId) {
-    msg += ` | Solicitud #${quoteId}`
-  }
-  
-  if (message && message.trim()) {
-    msg += `\n\n${message}`
-  }
-  
-  msg += `\n\nAguardo respuesta. Gracias.`
-  
+
+  msg += `\nAguardo respuesta. Gracias.`
+
   return msg
 }
 
@@ -57,26 +36,22 @@ export function generateQuoteMessage(customerData, items, quoteId = null) {
 export function openWhatsApp(message, phoneNumber = WHATSAPP_NUMBER) {
   const encodedMessage = encodeURIComponent(message)
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`
-  
-  // Abrir en nueva pestaña
+
   window.open(whatsappUrl, '_blank')
 }
 
 /**
- * Genera y abre WhatsApp con la cotización
- * @param {Object} customerData - Datos del cliente
+ * Abre WhatsApp con la cotización del carrito (flujo directo sin formulario)
  * @param {Array} items - Items del carrito
- * @param {number} quoteId - ID de la cotización (opcional)
  */
-export function sendQuoteToWhatsApp(customerData, items, quoteId = null) {
-  const message = generateQuoteMessage(customerData, items, quoteId)
+export function sendCartToWhatsApp(items) {
+  const message = generateCartQuoteMessage(items)
   openWhatsApp(message)
 }
 
 export default {
-  generateQuoteMessage,
+  generateCartQuoteMessage,
   openWhatsApp,
-  sendQuoteToWhatsApp,
+  sendCartToWhatsApp,
   WHATSAPP_NUMBER,
 }
-

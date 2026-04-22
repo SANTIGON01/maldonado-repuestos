@@ -270,17 +270,6 @@ class ApiClient {
     })
   }
 
-  /**
-   * Crear cotización con items (para WhatsApp)
-   * @param {Object} quoteData - Datos del cliente y items
-   */
-  async createQuoteWhatsApp(quoteData) {
-    return this.request('/quotes/whatsapp', {
-      method: 'POST',
-      body: JSON.stringify(quoteData),
-    })
-  }
-
   async getMyQuotes() {
     return this.request('/quotes/my-quotes')
   }
