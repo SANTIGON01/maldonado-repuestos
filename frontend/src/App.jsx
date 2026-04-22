@@ -12,7 +12,6 @@ const AdminPage = lazy(() => import('./pages/AdminPage'))
 
 // Modals - Lazy loaded (solo se cargan cuando el usuario los abre)
 const QuoteCartSidebar = lazy(() => import('./components/QuoteCartSidebar'))
-const QuoteWhatsAppModal = lazy(() => import('./components/QuoteWhatsAppModal'))
 const LoginModal = lazy(() => import('./components/LoginModal'))
 const QuoteModal = lazy(() => import('./components/QuoteModal'))
 
@@ -29,7 +28,6 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isQuoteOpen, setIsQuoteOpen] = useState(false)
-  const [isQuoteWhatsAppOpen, setIsQuoteWhatsAppOpen] = useState(false)
   const [quoteProduct, setQuoteProduct] = useState(null)
   
   const location = useLocation()
@@ -54,11 +52,6 @@ function App() {
   // Abrir carrito de cotización (NO requiere login)
   const handleCartClick = () => {
     setIsCartOpen(true)
-  }
-
-  // Abrir modal de cotización por WhatsApp
-  const handleRequestQuote = () => {
-    setIsQuoteWhatsAppOpen(true)
   }
 
   const handleQuoteRequest = (product = null) => {
@@ -123,13 +116,6 @@ function App() {
           <QuoteCartSidebar
             isOpen={isCartOpen}
             onClose={() => setIsCartOpen(false)}
-            onRequestQuote={handleRequestQuote}
-          />
-        )}
-        {isQuoteWhatsAppOpen && (
-          <QuoteWhatsAppModal
-            isOpen={isQuoteWhatsAppOpen}
-            onClose={() => setIsQuoteWhatsAppOpen(false)}
           />
         )}
         {isLoginOpen && (

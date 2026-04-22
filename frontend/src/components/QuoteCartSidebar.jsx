@@ -6,10 +6,16 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Trash2, Plus, Minus, ClipboardList, MessageCircle, Package } from 'lucide-react'
 import { useLocalCartStore } from '../store/localCartStore'
 import { optimizeImage } from '../lib/cloudinary'
+import { sendCartToWhatsApp } from '../services/whatsapp'
 
-export default function QuoteCartSidebar({ isOpen, onClose, onRequestQuote }) {
+export default function QuoteCartSidebar({ isOpen, onClose }) {
   const { items, updateQuantity, removeItem } = useLocalCartStore()
   const itemsCount = items.reduce((total, item) => total + item.quantity, 0)
+
+  const handleSendToWhatsApp = () => {
+    sendCartToWhatsApp(items)
+    onClose()
+  }
 
   return (
     <AnimatePresence>
@@ -150,11 +156,8 @@ export default function QuoteCartSidebar({ isOpen, onClose, onRequestQuote }) {
                 </div>
                 
                 <button
-                  onClick={() => {
-                    onClose()
-                    onRequestQuote?.()
-                  }}
-                  className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white 
+                  onClick={handleSendToWhatsApp}
+                  className="w-full bg-gradient-to-r from-green-600 to-green-500 text-white
                            font-display text-xl py-4 rounded-xl
                            flex items-center justify-center gap-3 
                            hover:from-green-700 hover:to-green-600 
