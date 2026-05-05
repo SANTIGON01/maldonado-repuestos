@@ -2,6 +2,7 @@ import { memo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Phone, Mail, MessageCircle, MapPin, Clock, Send, ArrowUpRight, CheckCircle, Loader2 } from 'lucide-react'
 import api from '../lib/api'
+import { trackWhatsAppClick } from '../services/whatsapp'
 
 // Información de contacto del negocio - Maipú, Mendoza
 const PHONE_NUMBER = '0261 15-454-4128'
@@ -108,8 +109,12 @@ export default memo(function CallToAction({ onQuoteClick }) {
                   transition={{ delay: index * 0.1 }}
                 >
                   {item.href ? (
-                    <a 
+                    <a
                       href={item.href}
+                      onClick={item.label === 'WHATSAPP' ? (e) => {
+                        e.preventDefault()
+                        trackWhatsAppClick(item.href)
+                      } : undefined}
                       className="group flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-maldonado-cream rounded-lg sm:rounded-none border-2 border-transparent
                                hover:border-maldonado-dark hover:bg-white transition-all"
                     >
@@ -147,7 +152,11 @@ export default memo(function CallToAction({ onQuoteClick }) {
               href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('¡Hola! Necesito cotización de repuestos para semirremolque.')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex sm:inline-flex items-center justify-center gap-2 sm:gap-3 mt-6 sm:mt-8 px-6 sm:px-8 py-3 sm:py-4 
+              onClick={(e) => {
+                e.preventDefault()
+                trackWhatsAppClick(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('¡Hola! Necesito cotización de repuestos para semirremolque.')}`)
+              }}
+              className="flex sm:inline-flex items-center justify-center gap-2 sm:gap-3 mt-6 sm:mt-8 px-6 sm:px-8 py-3 sm:py-4
                        bg-green-600 text-white font-heading text-sm sm:text-base rounded-xl sm:rounded-none
                        border-2 border-green-700 shadow-brutal
                        hover:translate-x-1 hover:translate-y-1 hover:shadow-none
