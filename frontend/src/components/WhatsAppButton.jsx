@@ -5,6 +5,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
+import { trackWhatsAppClick } from '../services/whatsapp'
 
 // Icono SVG oficial de WhatsApp
 function WhatsAppIcon({ className }) {
@@ -43,7 +44,7 @@ export default function WhatsAppButton() {
   const handleClick = () => {
     setHasInteracted(true)
     setShowTooltip(false)
-    window.open(whatsappUrl, '_blank')
+    trackWhatsAppClick(whatsappUrl)
   }
 
   return (
